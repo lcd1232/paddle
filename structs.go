@@ -60,6 +60,7 @@ type alertName struct {
 	AlertName string `schema:"alert_name"`
 }
 
+// RefundType defines possible reason for refund.
 type RefundType string
 
 const (
