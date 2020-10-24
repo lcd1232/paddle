@@ -114,3 +114,13 @@ func Test_parseBool(t *testing.T) {
 		})
 	}
 }
+
+func TestSetVerification(t *testing.T) {
+	c := Client{}
+	c.SetVerification(true)
+	_, ok := c.verifier.(*realVerifier)
+	assert.True(t, ok)
+	c.SetVerification(false)
+	_, ok = c.verifier.(*noonVerifier)
+	assert.True(t, ok)
+}
