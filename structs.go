@@ -46,6 +46,7 @@ const (
 	PausedReasonVoluntary  PausedReason = "voluntary"
 )
 
+// PaymentMethod defines possible payment method type.
 type PaymentMethod string
 
 const (
