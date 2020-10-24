@@ -46,6 +46,7 @@ const (
 	PausedReasonVoluntary  PausedReason = "voluntary"
 )
 
+// PaymentMethod defines possible payment method type.
 type PaymentMethod string
 
 const (
@@ -60,6 +61,7 @@ type alertName struct {
 	AlertName string `schema:"alert_name"`
 }
 
+// RefundType defines possible reason for refund.
 type RefundType string
 
 const (
