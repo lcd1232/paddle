@@ -4,6 +4,9 @@ os:
   - linux
   - osx
 
+env:
+  - GO111MODULE=on
+
 go:
   - "1.10"
   - "1.11"
@@ -13,10 +16,8 @@ go:
   - "1.15"
   - master
 
-install: true
-
 script:
-  - env GO111MODULE=on go test -coverprofile=coverage.txt -covermode=atomic
+  - go test -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
