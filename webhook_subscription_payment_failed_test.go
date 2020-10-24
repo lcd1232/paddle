@@ -24,7 +24,7 @@ func TestParseSubscriptionPaymentFailedWebhook(t *testing.T) {
 			name: "valid form data",
 			args: args{
 				form: url.Values{
-					"alert_name":              {"subscription_payment_succeeded"},
+					"alert_name":              {"subscription_payment_failed"},
 					"alert_id":                {"27120763"},
 					"amount":                  {"2.99"},
 					"cancel_url":              {"https://checkout.paddle.com/subscription/cancel-url"},
@@ -50,7 +50,7 @@ func TestParseSubscriptionPaymentFailedWebhook(t *testing.T) {
 				},
 			},
 			want: SubscriptionPaymentFailed{
-				AlertName:             AlertSubscriptionPaymentSucceeded,
+				AlertName:             AlertSubscriptionPaymentFailed,
 				AlertID:               "27120763",
 				Amount:                "2.99",
 				CancelURL:             "https://checkout.paddle.com/subscription/cancel-url",
