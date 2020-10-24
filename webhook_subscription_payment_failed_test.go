@@ -43,7 +43,7 @@ func TestParseSubscriptionPaymentFailedWebhook(t *testing.T) {
 					"update_url":              {"https://checkout.paddle.com/subscription/update-url"},
 					"subscription_payment_id": {"1234"},
 					"installments":            {"1"},
-					"order_id":                {"1234567"},
+					"order_id":                {"123-4567"},
 					"user_id":                 {"123456"},
 					"attempt_number":          {"1"},
 					"p_signature":             {"signature"},
@@ -54,7 +54,7 @@ func TestParseSubscriptionPaymentFailedWebhook(t *testing.T) {
 				AlertID:               "27120763",
 				Amount:                "2.99",
 				CancelURL:             "https://checkout.paddle.com/subscription/cancel-url",
-				CheckoutID:            "54832806-chrea1c514a3eb5-25c3040268",
+				CheckoutID:            "54832806-chrea1c514a3eb5-25c3040269",
 				Currency:              "USD",
 				Email:                 "test@example.org",
 				EventTime:             time.Date(2020, 4, 28, 8, 42, 47, 0, time.UTC),
@@ -69,7 +69,7 @@ func TestParseSubscriptionPaymentFailedWebhook(t *testing.T) {
 				UpdateURL:             "https://checkout.paddle.com/subscription/update-url",
 				SubscriptionPaymentID: "1234",
 				Installments:          1,
-				OrderID:               "123-456",
+				OrderID:               "123-4567",
 				UserID:                "123456",
 				AttemptNumber:         1,
 			},
@@ -84,7 +84,7 @@ func TestParseSubscriptionPaymentFailedWebhook(t *testing.T) {
 				mock.Anything).Return(
 				nil,
 			).Once()
-			got, err := c.ParseSubscriptionPaymentSucceededWebhook(tt.args.form)
+			got, err := c.ParseSubscriptionPaymentFailedWebhook(tt.args.form)
 			if tt.wantErr {
 				require.Error(t, err)
 				return

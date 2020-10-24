@@ -3,10 +3,44 @@ package paddle
 import (
 	"net/url"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 func (c *Client) ParseSubscriptionPaymentFailedWebhook(form url.Values) (SubscriptionPaymentFailed, error) {
-	return SubscriptionPaymentFailed{}, nil
+	signature := form.Get(signatureKey)
+	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
+		return SubscriptionPaymentFailed{}, errors.WithStack(err)
+	}
+	var spfw subscriptionPaymentFailedWebhook
+	if err := decoder.Decode(&spfw, form); err != nil {
+		return SubscriptionPaymentFailed{}, errors.WithStack(err)
+	}
+	spf := SubscriptionPaymentFailed{
+		AlertName:             Alert(spfw.AlertName),
+		AlertID:               spfw.AlertID,
+		Amount:                spfw.Amount,
+		CancelURL:             spfw.CancelURL,
+		CheckoutID:            spfw.CheckoutID,
+		Currency:              spfw.Currency,
+		Email:                 spfw.Email,
+		EventTime:             time.Time(spfw.EventTime),
+		MarketingConsent:      bool(spfw.MarketingConsent),
+		NextRetryDate:         time.Time(spfw.NextRetryDate),
+		Passthrough:           spfw.Passthrough,
+		Quantity:              int(spfw.Quantity),
+		Status:                Status(spfw.Status),
+		SubscriptionID:        spfw.SubscriptionID,
+		SubscriptionPlanID:    spfw.SubscriptionPlanID,
+		UnitPrice:             spfw.UnitPrice,
+		UpdateURL:             spfw.UpdateURL,
+		SubscriptionPaymentID: spfw.SubscriptionPaymentID,
+		Installments:          int(spfw.Installments),
+		OrderID:               spfw.OrderID,
+		UserID:                spfw.UserID,
+		AttemptNumber:         int(spfw.AttemptNumber),
+	}
+	return spf, nil
 }
 
 type SubscriptionPaymentFailed struct {
@@ -35,7 +69,7 @@ type SubscriptionPaymentFailed struct {
 }
 
 type subscriptionPaymentFailedWebhook struct {
-	AlertName             alertName  `schema:"alert_name"`
+	AlertName             string     `schema:"alert_name"`
 	AlertID               string     `schema:"alert_id"`
 	Amount                string     `schema:"amount"`
 	CancelURL             string     `schema:"cancel_url"`
@@ -43,7 +77,7 @@ type subscriptionPaymentFailedWebhook struct {
 	Currency              string     `schema:"currency"`
 	Email                 string     `schema:"email"`
 	EventTime             customTime `schema:"event_time"`
-	MarketingConsent      bool       `schema:"marketing_consent"`
+	MarketingConsent      customBool `schema:"marketing_consent"`
 	NextRetryDate         customDate `schema:"next_retry_date"`
 	Passthrough           string     `schema:"passthrough"`
 	Quantity              customInt  `schema:"quantity"`
