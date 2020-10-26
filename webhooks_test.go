@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func NewTestClient() (*Client, *verifierMock) {
+func NewTestClient() (*WebhookClient, *verifierMock) {
 	vm := new(verifierMock)
-	return &Client{
+	return &WebhookClient{
 		verifier: vm,
 	}, vm
 }
