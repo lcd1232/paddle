@@ -97,7 +97,7 @@ func TestParsePaymentSucceededWebhook(t *testing.T) {
 				mock.Anything).Return(
 				nil,
 			).Once()
-			got, err := c.ParseSubscriptionPaymentSucceededWebhook(tt.args.form)
+			got, err := c.ParsePaymentSucceededWebhook(tt.args.form)
 			if tt.wantErr {
 				require.Error(t, err)
 				return
