@@ -2,10 +2,13 @@ package paddle
 
 import "net/http"
 
+const APIBaseURL = "https://vendors.paddle.com/api/2.0"
+
 type Client struct {
 	client         *http.Client
 	vendorID       string
 	vendorAuthCode string
+	apiURL         string
 }
 
 func NewClient(client *http.Client) *Client {
@@ -14,6 +17,7 @@ func NewClient(client *http.Client) *Client {
 	}
 	return &Client{
 		client: client,
+		apiURL: APIBaseURL,
 	}
 }
 
