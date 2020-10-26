@@ -88,16 +88,30 @@ func Test_parseBool(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "true",
+			name: "1 is true",
 			args: args{
 				s: "1",
 			},
 			want: true,
 		},
 		{
-			name: "false",
+			name: "0 is false",
 			args: args{
 				s: "0",
+			},
+			want: false,
+		},
+		{
+			name: "true",
+			args: args{
+				s: "true",
+			},
+			want: true,
+		},
+		{
+			name: "false",
+			args: args{
+				s: "false",
 			},
 			want: false,
 		},
