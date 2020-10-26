@@ -3,56 +3,50 @@ package paddle
 import (
 	"net/url"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 func (c *Client) ParsePaymentSucceededWebhook(form url.Values) (PaymentSucceeded, error) {
-	//signature := form.Get(signatureKey)
-	//if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
-	//	return PaymentSucceeded{}, errors.WithStack(err)
-	//}
-	//var suw subscriptionPaymentSucceededWebhook
-	//if err := decoder.Decode(&suw, form); err != nil {
-	//	return SubscriptionPaymentSucceeded{}, errors.WithStack(err)
-	//}
-	//sc := PaymentSucceeded{
-	//	AlertName:             Alert(suw.AlertName),
-	//	AlertID:               suw.AlertID,
-	//	BalanceCurrency:       suw.BalanceCurrency,
-	//	BalanceEarnings:       suw.BalanceEarnings,
-	//	BalanceFee:            suw.BalanceFee,
-	//	BalanceGross:          suw.BalanceGross,
-	//	BalanceTax:            suw.BalanceTax,
-	//	CheckoutID:            suw.CheckoutID,
-	//	Country:               suw.Country,
-	//	Coupon:                suw.Coupon,
-	//	Currency:              suw.Currency,
-	//	CustomerName:          suw.CustomerName,
-	//	Earnings:              suw.Earnings,
-	//	Email:                 suw.Email,
-	//	EventTime:             time.Time(suw.EventTime),
-	//	Fee:                   suw.Fee,
-	//	InitialPayment:        bool(suw.InitialPayment),
-	//	Instalments:           suw.Instalments,
-	//	MarketingConsent:      bool(suw.MarketingConsent),
-	//	NextBillDate:          time.Time(suw.NextBillDate),
-	//	NextPaymentAmount:     suw.NextPaymentAmount,
-	//	OrderID:               suw.OrderID,
-	//	Passthrough:           suw.Passthrough,
-	//	PaymentMethod:         PaymentMethod(suw.PaymentMethod),
-	//	PaymentTax:            suw.PaymentTax,
-	//	PlanName:              suw.PlanName,
-	//	Quantity:              int(suw.Quantity),
-	//	ReceiptURL:            suw.ReceiptURL,
-	//	SaleGross:             suw.SaleGross,
-	//	Status:                Status(suw.Status),
-	//	SubscriptionID:        suw.SubscriptionID,
-	//	SubscriptionPaymentID: suw.SubscriptionPaymentID,
-	//	SubscriptionPlanID:    suw.SubscriptionPlanID,
-	//	UnitPrice:             suw.UnitPrice,
-	//	UserID:                suw.UserID,
-	//}
-	//return sc, nil
-	return PaymentSucceeded{}, nil
+	signature := form.Get(signatureKey)
+	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
+		return PaymentSucceeded{}, errors.WithStack(err)
+	}
+	var psw paymentSucceededWebhook
+	if err := decoder.Decode(&psw, form); err != nil {
+		return PaymentSucceeded{}, errors.WithStack(err)
+	}
+	ps := PaymentSucceeded{
+		AlertName:         Alert(psw.AlertName),
+		AlertID:           psw.AlertID,
+		BalanceCurrency:   psw.BalanceCurrency,
+		BalanceEarnings:   psw.BalanceEarnings,
+		BalanceFee:        psw.BalanceFee,
+		BalanceGross:      psw.BalanceGross,
+		BalanceTax:        psw.BalanceTax,
+		CheckoutID:        psw.CheckoutID,
+		Country:           psw.Country,
+		Coupon:            psw.Coupon,
+		Currency:          psw.Currency,
+		CustomerName:      psw.CustomerName,
+		Earnings:          psw.Earnings,
+		Email:             psw.Email,
+		EventTime:         time.Time(psw.EventTime),
+		Fee:               psw.Fee,
+		MarketingConsent:  bool(psw.MarketingConsent),
+		OrderID:           psw.OrderID,
+		IP:                psw.IP,
+		Passthrough:       psw.Passthrough,
+		PaymentMethod:     PaymentMethod(psw.PaymentMethod),
+		PaymentTax:        psw.PaymentTax,
+		ProductID:         psw.ProductID,
+		ProductName:       psw.ProductName,
+		Quantity:          int(psw.Quantity),
+		ReceiptURL:        psw.ReceiptURL,
+		SaleGross:         psw.SaleGross,
+		UsedPriceOverride: bool(psw.UsedPriceOverride),
+	}
+	return ps, nil
 }
 
 type PaymentSucceeded struct {
@@ -72,7 +66,6 @@ type PaymentSucceeded struct {
 	Email             string
 	EventTime         time.Time
 	Fee               string
-	Instalments       string
 	MarketingConsent  bool
 	OrderID           string
 	IP                string
@@ -104,7 +97,6 @@ type paymentSucceededWebhook struct {
 	Email             string     `schema:"email"`
 	EventTime         customTime `schema:"event_time"`
 	Fee               string     `schema:"fee"`
-	Instalments       string     `schema:"instalments"`
 	MarketingConsent  customBool `schema:"marketing_consent"`
 	OrderID           string     `schema:"order_id"`
 	IP                string     `schema:"ip"`
