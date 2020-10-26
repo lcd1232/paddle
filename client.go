@@ -7,5 +7,10 @@ type Client struct {
 }
 
 func NewClient(client *http.Client) *Client {
-	return nil
+	if client == nil {
+		client = http.DefaultClient
+	}
+	return &Client{
+		client: client,
+	}
 }
