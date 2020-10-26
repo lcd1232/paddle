@@ -50,24 +50,26 @@ func (c *Client) ParsePaymentSucceededWebhook(form url.Values) (PaymentSucceeded
 }
 
 type PaymentSucceeded struct {
-	AlertName         Alert
-	AlertID           string
-	BalanceCurrency   string
-	BalanceEarnings   string
-	BalanceFee        string
-	BalanceGross      string
-	BalanceTax        string
-	CheckoutID        string
-	Country           string
-	Coupon            string
-	Currency          string
-	CustomerName      string
-	Earnings          string
-	Email             string
-	EventTime         time.Time
-	Fee               string
-	MarketingConsent  bool
-	OrderID           string
+	AlertName        Alert
+	AlertID          string
+	BalanceCurrency  string
+	BalanceEarnings  string
+	BalanceFee       string
+	BalanceGross     string
+	BalanceTax       string
+	CheckoutID       string
+	Country          string
+	Coupon           string
+	Currency         string
+	CustomerName     string
+	Earnings         string
+	Email            string
+	EventTime        time.Time
+	Fee              string
+	MarketingConsent bool
+	OrderID          string
+	// IP defines user IP.
+	// Deprecated, see https://developer.paddle.com/webhook-reference/one-off-purchase-alerts/payment-succeeded
 	IP                string
 	Passthrough       string
 	PaymentMethod     PaymentMethod
