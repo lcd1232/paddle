@@ -2,7 +2,7 @@ package paddle
 
 import "net/http"
 
-const APIBaseURL = "https://vendors.paddle.com/api/2.0"
+const APIBaseURL = "https://vendors.paddle.com/api/2.0/"
 
 type Client struct {
 	client         *http.Client
