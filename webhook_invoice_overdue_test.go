@@ -95,7 +95,6 @@ func TestInvoiceOverdueWebhook(t *testing.T) {
 				PaymentMethod:                PaymentMethodCard,
 				Fee:                          "1234",
 				Earnings:                     "1234",
-				PSignature:                   "signature",
 				EventTime:                    time.Date(2020, 10, 30, 0, 0, 0, 0, time.UTC),
 			},
 		},

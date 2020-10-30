@@ -50,7 +50,6 @@ func (c *Client) ParseInvoiceOverdueWebhook(form url.Values) (InvoiceOverdue, er
 		PaymentMethod:                PaymentMethod(iow.PaymentMethod),
 		Fee:                          iow.Fee,
 		Earnings:                     iow.Earnings,
-		PSignature:                   iow.PSignature,
 		EventTime:                    time.Time(iow.EventTime),
 	}
 	return io, nil
@@ -90,7 +89,6 @@ type InvoiceOverdue struct {
 	PaymentMethod                PaymentMethod
 	Fee                          string
 	Earnings                     string
-	PSignature                   string
 	EventTime                    time.Time
 }
 
