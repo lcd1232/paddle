@@ -50,7 +50,6 @@ func (c *Client) ParseInvoiceSentWebhook(form url.Values) (InvoiceSent, error) {
 		PaymentMethod:                PaymentMethod(isw.PaymentMethod),
 		Fee:                          isw.Fee,
 		Earnings:                     isw.Earnings,
-		PSignature:                   isw.PSignature,
 		EventTime:                    time.Time(isw.EventTime),
 	}
 	return is, nil
@@ -90,7 +89,6 @@ type InvoiceSent struct {
 	PaymentMethod                PaymentMethod
 	Fee                          string
 	Earnings                     string
-	PSignature                   string
 	EventTime                    time.Time
 }
 
