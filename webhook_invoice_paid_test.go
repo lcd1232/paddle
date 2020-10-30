@@ -105,7 +105,6 @@ func TestInvoicePaidWebhook(t *testing.T) {
 				BalanceTax:                   "1234",
 				BalanceGross:                 "1234",
 				DateReconciled:               time.Date(2020, 10, 30, 0, 0, 0, 0, time.UTC),
-				PSignature:                   "signature",
 				EventTime:                    time.Date(2020, 10, 30, 0, 0, 0, 0, time.UTC),
 			},
 		},

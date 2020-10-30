@@ -55,7 +55,6 @@ func (c *Client) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
 		BalanceTax:                   ipw.BalanceTax,
 		BalanceGross:                 ipw.BalanceGross,
 		DateReconciled:               time.Time(ipw.DateReconciled),
-		PSignature:                   ipw.PSignature,
 		EventTime:                    time.Time(ipw.EventTime),
 	}
 	return ip, nil
@@ -100,7 +99,6 @@ type InvoicePaid struct {
 	BalanceTax                   string
 	BalanceGross                 string
 	DateReconciled               time.Time
-	PSignature                   string
 	EventTime                    time.Time
 }
 
