@@ -8,6 +8,7 @@ const (
 	StatusPastDue  Status = "past_due"
 	StatusPaused   Status = "paused"
 	StatusDeleted  Status = "deleted"
+	StatusPaid     Status = "paid"
 	StatusUnpaid   Status = "unpaid"
 	StatusOverdue  Status = "overdue"
 )
