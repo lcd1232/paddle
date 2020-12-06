@@ -99,23 +99,23 @@ func parseBool(s string) (bool, error) {
 	return b, nil
 }
 
-type Client struct {
+type WebhookClient struct {
 	publicKey *rsa.PublicKey
 	verifier  verifier
 }
 
-func NewClient(publicKey string) (*Client, error) {
+func NewWebhookClient(publicKey string) (*WebhookClient, error) {
 	pubKey, err := parsePublicKey(publicKey)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	return &Client{
+	return &WebhookClient{
 		publicKey: pubKey,
 		verifier:  new(realVerifier),
 	}, nil
 }
 
-func (c *Client) SetVerification(b bool) {
+func (c *WebhookClient) SetVerification(b bool) {
 	if b {
 		c.verifier = new(realVerifier)
 	} else {
