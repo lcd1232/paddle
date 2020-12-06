@@ -88,16 +88,30 @@ func Test_parseBool(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "true",
+			name: "1 is true",
 			args: args{
 				s: "1",
 			},
 			want: true,
 		},
 		{
-			name: "false",
+			name: "0 is false",
 			args: args{
 				s: "0",
+			},
+			want: false,
+		},
+		{
+			name: "true",
+			args: args{
+				s: "true",
+			},
+			want: true,
+		},
+		{
+			name: "false",
+			args: args{
+				s: "false",
 			},
 			want: false,
 		},
@@ -113,4 +127,14 @@ func Test_parseBool(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestSetVerification(t *testing.T) {
+	c := Client{}
+	c.SetVerification(true)
+	_, ok := c.verifier.(*realVerifier)
+	assert.True(t, ok)
+	c.SetVerification(false)
+	_, ok = c.verifier.(*noonVerifier)
+	assert.True(t, ok)
 }
