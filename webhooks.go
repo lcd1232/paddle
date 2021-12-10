@@ -19,18 +19,6 @@ func init() {
 	decoder.IgnoreUnknownKeys(true)
 }
 
-type customBool bool
-
-func (cb *customBool) UnmarshalText(text []byte) error {
-	s := string(text)
-	b, err := parseBool(s)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	*cb = customBool(b)
-	return nil
-}
-
 type customTime time.Time
 
 func (ct *customTime) UnmarshalText(text []byte) error {
