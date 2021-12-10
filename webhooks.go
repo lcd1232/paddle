@@ -19,18 +19,6 @@ func init() {
 	decoder.IgnoreUnknownKeys(true)
 }
 
-type customTime time.Time
-
-func (ct *customTime) UnmarshalText(text []byte) error {
-	s := string(text)
-	t, err := parseTime(s)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	*ct = customTime(t)
-	return nil
-}
-
 type customDate time.Time
 
 func (cd *customDate) UnmarshalText(text []byte) error {

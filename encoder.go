@@ -7,9 +7,16 @@ import (
 var encoder *schema.Encoder
 
 func init() {
-	cb := customBool(true)
 
 	encoder = schema.NewEncoder()
-	encoder.RegisterEncoder(cb, customBoolEncoder)
-	encoder.RegisterEncoder(&cb, customBoolEncoder)
+	{
+		cb := customBool(true)
+		encoder.RegisterEncoder(cb, customBoolEncoder)
+		encoder.RegisterEncoder(&cb, customBoolEncoder)
+	}
+	{
+		ct := customTime{}
+		encoder.RegisterEncoder(ct, customTimeEncoder)
+		encoder.RegisterEncoder(&ct, customTimeEncoder)
+	}
 }
