@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
+func (c *WebhookClient) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return InvoicePaid{}, errors.WithStack(err)

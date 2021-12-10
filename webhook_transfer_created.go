@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseTransferCreatedWebhook(form url.Values) (TransferCreated, error) {
+func (c *WebhookClient) ParseTransferCreatedWebhook(form url.Values) (TransferCreated, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return TransferCreated{}, errors.WithStack(err)
