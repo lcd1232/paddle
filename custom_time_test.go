@@ -22,12 +22,12 @@ func TestCustomTimeEncoder(t *testing.T) {
 		want string
 	}{
 		{
-			name: "2021-05-11",
+			name: "2021-05-11 15:21:55",
 			data: A{
 				B: ct,
 			},
 			key:  "b",
-			want: "2021-05-11",
+			want: "2021-05-11 15:21:55",
 		},
 		{
 			name: "nil",

@@ -20,5 +20,15 @@ func (ct *customTime) UnmarshalText(text []byte) error {
 }
 
 func customTimeEncoder(value reflect.Value) string {
-	panic("implement me")
+	var t time.Time
+	if value.Kind() == reflect.Ptr {
+		if value.IsNil() {
+			return ""
+		}
+		ct := value.Interface().(*customTime)
+		t = time.Time(*ct)
+	} else {
+		t = time.Time(value.Interface().(customTime))
+	}
+	return t.Format("2006-01-02 15:04:05")
 }
