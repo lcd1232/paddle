@@ -8,6 +8,9 @@ const (
 	StatusPastDue  Status = "past_due"
 	StatusPaused   Status = "paused"
 	StatusDeleted  Status = "deleted"
+	StatusPaid     Status = "paid"
+	StatusUnpaid   Status = "unpaid"
+	StatusOverdue  Status = "overdue"
 )
 
 type Alert string
@@ -35,8 +38,9 @@ const (
 	AlertNewAudienceMember    Alert = "new_audience_member"
 	AlertUpdateAudienceMember Alert = "update_audience_member"
 
-	AlertInvoicePaid Alert = "invoice_paid"
-	AlertInvoiceSent Alert = "invoice_sent"
+	AlertInvoicePaid    Alert = "invoice_paid"
+	AlertInvoiceSent    Alert = "invoice_sent"
+	AlertInvoiceOverdue Alert = "invoice_overdue"
 )
 
 type PausedReason string
