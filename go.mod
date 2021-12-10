@@ -1,4 +1,4 @@
-module github.com/lcd1232/paddle
+module github.com/lcd1232/paddle/v2
 
 go 1.16
 
