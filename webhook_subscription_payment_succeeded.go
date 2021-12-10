@@ -36,7 +36,7 @@ func (c *WebhookClient) ParseSubscriptionPaymentSucceededWebhook(form url.Values
 		InitialPayment:        bool(suw.InitialPayment),
 		Instalments:           suw.Instalments,
 		MarketingConsent:      bool(suw.MarketingConsent),
-		NextBillDate:          time.Time(suw.NextBillDate),
+		NextBillDate:          suw.NextBillDate.Time(),
 		NextPaymentAmount:     suw.NextPaymentAmount,
 		OrderID:               suw.OrderID,
 		Passthrough:           suw.Passthrough,

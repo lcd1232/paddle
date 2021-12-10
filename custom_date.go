@@ -1,6 +1,7 @@
 package paddle
 
 import (
+	"reflect"
 	"time"
 
 	"github.com/pkg/errors"
@@ -8,7 +9,7 @@ import (
 
 const dateLayout = "2006-01-02"
 
-type customDate time.Time
+type customDate int64
 
 func (cd *customDate) UnmarshalText(text []byte) error {
 	s := string(text)
@@ -16,8 +17,15 @@ func (cd *customDate) UnmarshalText(text []byte) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	*cd = customDate(t)
+	*cd = customDate(t.Unix())
 	return nil
+}
+
+func (cd *customDate) Time() time.Time {
+	if cd == nil {
+		return time.Time{}
+	}
+	return time.Unix(int64(*cd), 0)
 }
 
 func parseDate(s string) (time.Time, error) {
@@ -26,4 +34,19 @@ func parseDate(s string) (time.Time, error) {
 		return time.Time{}, errors.WithStack(err)
 	}
 	return t, nil
+}
+
+func customDateEncoder(value reflect.Value) string {
+	var t time.Time
+	if value.Kind() == reflect.Ptr {
+		if value.IsNil() {
+			return ""
+		}
+		cd := value.Interface().(*customDate)
+		t = cd.Time()
+	} else {
+		cd := value.Interface().(customDate)
+		t = cd.Time()
+	}
+	return t.UTC().Format(dateLayout)
 }

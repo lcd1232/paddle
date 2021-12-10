@@ -19,7 +19,7 @@ func (c *WebhookClient) ParseSubscriptionCancelledWebhook(form url.Values) (Subs
 	sc := SubscriptionCancelled{
 		AlertName:                 Alert(scw.AlertName),
 		AlertID:                   scw.AlertID,
-		CancellationEffectiveDate: time.Time(scw.CancellationEffectiveDate),
+		CancellationEffectiveDate: scw.CancellationEffectiveDate.Time(),
 		CheckoutID:                scw.CheckoutID,
 		Currency:                  scw.Currency,
 		Email:                     scw.Email,

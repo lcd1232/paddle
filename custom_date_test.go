@@ -14,7 +14,7 @@ func TestCustomDateEncoder(t *testing.T) {
 		B customDate  `schema:"b"`
 		C *customDate `schema:"c"`
 	}
-	cd := customDate(time.Date(2021, 05, 11, 15, 21, 55, 0, time.UTC))
+	cd := customDate(time.Date(2021, 05, 11, 15, 21, 55, 0, time.UTC).Unix())
 	for _, tc := range []struct {
 		name string
 		data A

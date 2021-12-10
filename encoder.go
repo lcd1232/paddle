@@ -19,4 +19,9 @@ func init() {
 		encoder.RegisterEncoder(ct, customTimeEncoder)
 		encoder.RegisterEncoder(&ct, customTimeEncoder)
 	}
+	{
+		cd := customDate(0)
+		encoder.RegisterEncoder(cd, customDateEncoder)
+		encoder.RegisterEncoder(&cd, customDateEncoder)
+	}
 }

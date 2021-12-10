@@ -25,7 +25,7 @@ func (c *WebhookClient) ParseSubscriptionCreatedWebhook(form url.Values) (Subscr
 		Email:              scw.Email,
 		EventTime:          scw.EventTime.Time(),
 		MarketingConsent:   bool(scw.MarketingConsent),
-		NextBillDate:       time.Time(scw.NextBillDate),
+		NextBillDate:       scw.NextBillDate.Time(),
 		Passthrough:        scw.Passthrough,
 		Quantity:           int(scw.Quantity),
 		Source:             scw.Source,
