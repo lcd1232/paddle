@@ -9,12 +9,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCustomTimeEncoder(t *testing.T) {
+func TestCustomDateEncoder(t *testing.T) {
 	type A struct {
-		B customTime  `schema:"b"`
-		C *customTime `schema:"c"`
+		B customDate  `schema:"b"`
+		C *customDate `schema:"c"`
 	}
-	ct := customTime(time.Date(2021, 05, 11, 15, 21, 55, 0, time.UTC).Unix())
+	cd := customDate(time.Date(2021, 05, 11, 15, 21, 55, 0, time.UTC))
 	for _, tc := range []struct {
 		name string
 		data A
@@ -24,18 +24,18 @@ func TestCustomTimeEncoder(t *testing.T) {
 		{
 			name: "value",
 			data: A{
-				B: ct,
+				B: cd,
 			},
 			key:  "b",
-			want: "2021-05-11 15:21:55",
+			want: "2021-05-11",
 		},
 		{
 			name: "pointer",
 			data: A{
-				C: &ct,
+				C: &cd,
 			},
 			key:  "c",
-			want: "2021-05-11 15:21:55",
+			want: "2021-05-11",
 		},
 		{
 			name: "nil",

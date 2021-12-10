@@ -31,7 +31,7 @@ func (c *WebhookClient) ParsePaymentSucceededWebhook(form url.Values) (PaymentSu
 		CustomerName:      psw.CustomerName,
 		Earnings:          psw.Earnings,
 		Email:             psw.Email,
-		EventTime:         time.Time(psw.EventTime),
+		EventTime:         psw.EventTime.Time(),
 		Fee:               psw.Fee,
 		MarketingConsent:  bool(psw.MarketingConsent),
 		OrderID:           psw.OrderID,

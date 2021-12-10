@@ -23,7 +23,7 @@ func (c *WebhookClient) ParseSubscriptionCancelledWebhook(form url.Values) (Subs
 		CheckoutID:                scw.CheckoutID,
 		Currency:                  scw.Currency,
 		Email:                     scw.Email,
-		EventTime:                 time.Time(scw.EventTime),
+		EventTime:                 scw.EventTime.Time(),
 		MarketingConsent:          bool(scw.MarketingConsent),
 		Passthrough:               scw.Passthrough,
 		Quantity:                  int(scw.Quantity),

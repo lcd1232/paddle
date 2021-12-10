@@ -25,7 +25,7 @@ func (c *WebhookClient) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, e
 		TermDays:                     ipw.TermDays,
 		Status:                       Status(ipw.Status),
 		PurchaseOrderNumber:          ipw.PurchaseOrderNumber,
-		InvoicedAt:                   time.Time(ipw.InvoicedAt),
+		InvoicedAt:                   ipw.InvoicedAt.Time(),
 		Currency:                     ipw.Currency,
 		ProductID:                    ipw.ProductID,
 		ProductName:                  ipw.ProductName,
@@ -55,7 +55,7 @@ func (c *WebhookClient) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, e
 		BalanceTax:                   ipw.BalanceTax,
 		BalanceGross:                 ipw.BalanceGross,
 		DateReconciled:               time.Time(ipw.DateReconciled),
-		EventTime:                    time.Time(ipw.EventTime),
+		EventTime:                    ipw.EventTime.Time(),
 	}
 	return ip, nil
 }

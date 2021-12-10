@@ -24,7 +24,7 @@ func (c *WebhookClient) ParseSubscriptionPaymentFailedWebhook(form url.Values) (
 		CheckoutID:            spfw.CheckoutID,
 		Currency:              spfw.Currency,
 		Email:                 spfw.Email,
-		EventTime:             time.Time(spfw.EventTime),
+		EventTime:             spfw.EventTime.Time(),
 		MarketingConsent:      bool(spfw.MarketingConsent),
 		NextRetryDate:         time.Time(spfw.NextRetryDate),
 		Passthrough:           spfw.Passthrough,

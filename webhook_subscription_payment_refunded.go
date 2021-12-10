@@ -29,7 +29,7 @@ func (c *WebhookClient) ParseSubscriptionPaymentRefundedWebhook(form url.Values)
 		Currency:                webhook.Currency,
 		EarningsDecrease:        webhook.EarningsDecrease,
 		Email:                   webhook.Email,
-		EventTime:               time.Time(webhook.EventTime),
+		EventTime:               webhook.EventTime.Time(),
 		FeeRefund:               webhook.FeeRefund,
 		GrossRefund:             webhook.GrossRefund,
 		InitialPayment:          bool(webhook.InitialPayment),

@@ -6,7 +6,6 @@ import (
 	"encoding/pem"
 	"net/url"
 	"strconv"
-	"time"
 
 	"github.com/gorilla/schema"
 	"github.com/pkg/errors"
@@ -17,18 +16,6 @@ var decoder *schema.Decoder
 func init() {
 	decoder = schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
-}
-
-type customDate time.Time
-
-func (cd *customDate) UnmarshalText(text []byte) error {
-	s := string(text)
-	t, err := parseDate(s)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	*cd = customDate(t)
-	return nil
 }
 
 type customInt int
@@ -49,30 +36,6 @@ func GetAlertName(form url.Values) (Alert, error) {
 		return "", errors.WithStack(err)
 	}
 	return Alert(an.AlertName), nil
-}
-
-func parseTime(s string) (time.Time, error) {
-	t, err := time.Parse("2006-01-02 15:04:05", s)
-	if err != nil {
-		return time.Time{}, errors.WithStack(err)
-	}
-	return t, nil
-}
-
-func parseDate(s string) (time.Time, error) {
-	t, err := time.Parse("2006-01-02", s)
-	if err != nil {
-		return time.Time{}, errors.WithStack(err)
-	}
-	return t, nil
-}
-
-func parseBool(s string) (bool, error) {
-	b, err := strconv.ParseBool(s)
-	if err != nil {
-		return false, errors.WithStack(err)
-	}
-	return b, nil
 }
 
 type WebhookClient struct {

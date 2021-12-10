@@ -25,7 +25,7 @@ func (c *WebhookClient) ParseInvoiceOverdueWebhook(form url.Values) (InvoiceOver
 		TermDays:                     iow.TermDays,
 		Status:                       Status(iow.Status),
 		PurchaseOrderNumber:          iow.PurchaseOrderNumber,
-		InvoicedAt:                   time.Time(iow.InvoicedAt),
+		InvoicedAt:                   iow.InvoicedAt.Time(),
 		Currency:                     iow.Currency,
 		ProductID:                    iow.ProductID,
 		ProductName:                  iow.ProductName,
@@ -50,7 +50,7 @@ func (c *WebhookClient) ParseInvoiceOverdueWebhook(form url.Values) (InvoiceOver
 		PaymentMethod:                PaymentMethod(iow.PaymentMethod),
 		Fee:                          iow.Fee,
 		Earnings:                     iow.Earnings,
-		EventTime:                    time.Time(iow.EventTime),
+		EventTime:                    iow.EventTime.Time(),
 	}
 	return io, nil
 }

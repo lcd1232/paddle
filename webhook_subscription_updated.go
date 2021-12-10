@@ -24,7 +24,7 @@ func (c *WebhookClient) ParseSubscriptionUpdatedWebhook(form url.Values) (Subscr
 		CheckoutID:            suw.CheckoutID,
 		Currency:              suw.Currency,
 		Email:                 suw.Email,
-		EventTime:             time.Time(suw.EventTime),
+		EventTime:             suw.EventTime.Time(),
 		MarketingConsent:      bool(suw.MarketingConsent),
 		NewPrice:              suw.NewPrice,
 		NewQuantity:           int(suw.NewQuantity),
@@ -41,7 +41,7 @@ func (c *WebhookClient) ParseSubscriptionUpdatedWebhook(form url.Values) (Subscr
 		OldStatus:             Status(suw.OldStatus),
 		OldSubscriptionPlanID: suw.OldSubscriptionPlanID,
 		OldUnitPrice:          suw.OldUnitPrice,
-		PausedAt:              time.Time(suw.PausedAt),
+		PausedAt:              suw.PausedAt.Time(),
 		PausedFrom:            time.Time(suw.PausedFrom),
 		PausedReason:          PausedReason(suw.PausedReason),
 	}

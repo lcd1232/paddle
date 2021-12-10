@@ -15,7 +15,7 @@ func init() {
 		encoder.RegisterEncoder(&cb, customBoolEncoder)
 	}
 	{
-		ct := customTime{}
+		ct := customTime(0)
 		encoder.RegisterEncoder(ct, customTimeEncoder)
 		encoder.RegisterEncoder(&ct, customTimeEncoder)
 	}

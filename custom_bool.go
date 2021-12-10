@@ -2,6 +2,7 @@ package paddle
 
 import (
 	"reflect"
+	"strconv"
 
 	"github.com/pkg/errors"
 )
@@ -16,6 +17,14 @@ func (cb *customBool) UnmarshalText(text []byte) error {
 	}
 	*cb = customBool(b)
 	return nil
+}
+
+func parseBool(s string) (bool, error) {
+	b, err := strconv.ParseBool(s)
+	if err != nil {
+		return false, errors.WithStack(err)
+	}
+	return b, nil
 }
 
 func customBoolEncoder(value reflect.Value) string {

@@ -21,7 +21,7 @@ func (c *WebhookClient) ParseTransferCreatedWebhook(form url.Values) (TransferCr
 		AlertID:   tcw.AlertID,
 		Amount:    tcw.Amount,
 		Currency:  tcw.Currency,
-		EventTime: time.Time(tcw.EventTime),
+		EventTime: tcw.EventTime.Time(),
 		PayoutID:  tcw.PayoutID,
 		Status:    Status(tcw.Status),
 	}

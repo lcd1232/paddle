@@ -25,7 +25,7 @@ func (c *WebhookClient) ParseInvoiceSentWebhook(form url.Values) (InvoiceSent, e
 		TermDays:                     isw.TermDays,
 		Status:                       Status(isw.Status),
 		PurchaseOrderNumber:          isw.PurchaseOrderNumber,
-		InvoicedAt:                   time.Time(isw.InvoicedAt),
+		InvoicedAt:                   isw.InvoicedAt.Time(),
 		Currency:                     isw.Currency,
 		ProductID:                    isw.ProductID,
 		ProductName:                  isw.ProductName,
@@ -50,7 +50,7 @@ func (c *WebhookClient) ParseInvoiceSentWebhook(form url.Values) (InvoiceSent, e
 		PaymentMethod:                PaymentMethod(isw.PaymentMethod),
 		Fee:                          isw.Fee,
 		Earnings:                     isw.Earnings,
-		EventTime:                    time.Time(isw.EventTime),
+		EventTime:                    isw.EventTime.Time(),
 	}
 	return is, nil
 }

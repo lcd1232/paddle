@@ -7,7 +7,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-type customTime time.Time
+const timeLayout = "2006-01-02 15:04:05"
+
+type customTime int64
 
 func (ct *customTime) UnmarshalText(text []byte) error {
 	s := string(text)
@@ -15,8 +17,23 @@ func (ct *customTime) UnmarshalText(text []byte) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	*ct = customTime(t)
+	*ct = customTime(t.Unix())
 	return nil
+}
+
+func (ct *customTime) Time() time.Time {
+	if ct == nil {
+		return time.Time{}
+	}
+	return time.Unix(int64(*ct), 0)
+}
+
+func parseTime(s string) (time.Time, error) {
+	t, err := time.Parse(timeLayout, s)
+	if err != nil {
+		return time.Time{}, errors.WithStack(err)
+	}
+	return t, nil
 }
 
 func customTimeEncoder(value reflect.Value) string {
@@ -26,9 +43,10 @@ func customTimeEncoder(value reflect.Value) string {
 			return ""
 		}
 		ct := value.Interface().(*customTime)
-		t = time.Time(*ct)
+		t = ct.Time()
 	} else {
-		t = time.Time(value.Interface().(customTime))
+		ct := value.Interface().(customTime)
+		t = ct.Time()
 	}
-	return t.Format("2006-01-02 15:04:05")
+	return t.UTC().Format(timeLayout)
 }
