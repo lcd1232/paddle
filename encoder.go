@@ -11,4 +11,5 @@ func init() {
 
 	encoder = schema.NewEncoder()
 	encoder.RegisterEncoder(cb, customBoolEncoder)
+	encoder.RegisterEncoder(&cb, customBoolEncoder)
 }

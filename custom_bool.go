@@ -19,6 +19,9 @@ func (cb *customBool) UnmarshalText(text []byte) error {
 }
 
 func customBoolEncoder(value reflect.Value) string {
+	if value.Kind() == reflect.Ptr && value.IsNil() {
+		return ""
+	}
 	b := value.Bool()
 	if b {
 		return "1"
