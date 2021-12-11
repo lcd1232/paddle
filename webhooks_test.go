@@ -138,3 +138,13 @@ func TestSetVerification(t *testing.T) {
 	_, ok = c.verifier.(*noonVerifier)
 	assert.True(t, ok)
 }
+
+func TestNewWebhookClient(t *testing.T) {
+	_, err := NewWebhookClient("")
+	require.Error(t, err)
+
+	wc, err := NewWebhookClient(publicKey)
+	require.NoError(t, err)
+	assert.NotNil(t, wc.publicKey)
+	assert.NotNil(t, wc.verifier)
+}
