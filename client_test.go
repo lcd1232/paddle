@@ -9,13 +9,24 @@ import (
 
 func TestNewClient(t *testing.T) {
 	c, err := NewClient(Settings{
-		URL: SandboxBaseURL,
+		URL:            SandboxBaseURL,
+		VendorID:       "123",
+		VendorAuthCode: "123abc",
 	})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	assert.NotNil(t, c.client)
 	assert.NotNil(t, c.BaseURL)
 	assert.Equal(t, userAgent, c.UserAgent)
-	assert.Zero(t, c.vendorID)
-	assert.Zero(t, c.vendorAuthCode)
+	assert.Equal(t, "123", c.vendorID)
+	assert.Zero(t, "123abc", c.vendorAuthCode)
+}
+
+func TestNewClientEmptySettings(t *testing.T) {
+	c, err := NewClient(Settings{})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	assert.NotNil(t, c.client)
+	assert.NotNil(t, c.BaseURL)
+	assert.Equal(t, userAgent, c.UserAgent)
 }
