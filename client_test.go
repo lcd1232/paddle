@@ -19,7 +19,7 @@ func TestNewClient(t *testing.T) {
 	assert.NotNil(t, c.BaseURL)
 	assert.Equal(t, userAgent, c.UserAgent)
 	assert.Equal(t, "123", c.vendorID)
-	assert.Zero(t, "123abc", c.vendorAuthCode)
+	assert.Equal(t, "123abc", c.vendorAuthCode)
 }
 
 func TestNewClientEmptySettings(t *testing.T) {
