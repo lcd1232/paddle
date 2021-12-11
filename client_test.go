@@ -30,3 +30,10 @@ func TestNewClientEmptySettings(t *testing.T) {
 	assert.NotNil(t, c.BaseURL)
 	assert.Equal(t, userAgent, c.UserAgent)
 }
+
+func TestNewClientInvalidURL(t *testing.T) {
+	_, err := NewClient(Settings{
+		URL: "http\\:a",
+	})
+	require.Error(t, err)
+}
