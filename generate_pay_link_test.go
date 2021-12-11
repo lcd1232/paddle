@@ -82,6 +82,22 @@ func TestGeneratePayLink(t *testing.T) {
 }`),
 			wantErr: true,
 		},
+		{
+			name:         "invalid json",
+			responseCode: http.StatusOK,
+			responseBody: []byte(`}`),
+			wantErr:      true,
+		},
+		{
+			name:         "502 status",
+			responseCode: http.StatusBadGateway,
+			responseBody: []byte(`{"success": true,
+  "response": {
+    "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
+  }
+}`),
+			wantErr: true,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			WithTestServer(t, tc.responseCode, tc.responseBody, func(url string, rCh <-chan *http.Request) {
