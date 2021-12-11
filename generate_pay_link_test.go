@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,23 +33,50 @@ func WithTestServer(t *testing.T, responseCode int, responseBody []byte, f func(
 }
 
 func TestGeneratePayLink(t *testing.T) {
-	responseBody := `{
+	for _, tc := range []struct {
+		name           string
+		vendorID       string
+		vendorAuthCode string
+		responseCode   int
+		responseBody   []byte
+		wantErr        bool
+		wantForm       url.Values
+		wantURL        string
+	}{
+		{
+			name:           "one parameter only",
+			vendorID:       "123",
+			vendorAuthCode: "12ac",
+			responseCode:   http.StatusOK,
+			responseBody: []byte(`{
   "success": true,
   "response": {
     "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
   }
-}`
-	WithTestServer(t, http.StatusOK, []byte(responseBody), func(url string, rCh <-chan *http.Request) {
-		c := NewTestClient(t, url, nil)
-		url, err := c.GeneratePayLink(context.Background())
-		require.NoError(t, err)
-		assert.Equal(t, "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ", url)
-		r := <-rCh
-		require.NoError(t, r.ParseForm())
-		assert.Equal(t, map[string][]string{
-			"vendor_id":        {"123"},
-			"vendor_auth_code": {"12ac"},
-			"product_id":       {"5"},
-		}, r.PostForm)
-	})
+}`),
+			wantForm: map[string][]string{
+				"vendor_id":        {"123"},
+				"vendor_auth_code": {"12ac"},
+				"product_id":       {"5"},
+			},
+			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			WithTestServer(t, tc.responseCode, tc.responseBody, func(url string, rCh <-chan *http.Request) {
+				c := NewTestClient(t, url, nil)
+				c.vendorAuthCode, c.vendorID = tc.vendorAuthCode, tc.vendorID
+				urlStr, err := c.GeneratePayLink(context.Background())
+				if tc.wantErr {
+					require.Error(t, err)
+					return
+				}
+				require.NoError(t, err)
+				assert.Equal(t, tc.wantURL, urlStr)
+				r := <-rCh
+				require.NoError(t, r.ParseForm())
+				assert.Equal(t, tc.wantForm, r.PostForm)
+			})
+		})
+	}
 }

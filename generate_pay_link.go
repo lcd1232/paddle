@@ -10,7 +10,7 @@ type GeneratePayLinkRequest struct {
 	// Required if not using custom products.
 	// If no ProductID is set, custom non-subscription product checkouts can be generated instead by specifying the required fields: Title, WebhookURL and prices.
 	// Note that CouponCode cannot be used with custom products.
-	ProductID int `schema:"product_id"`
+	ProductID int
 	// Title is the name of the product/title of the checkout. Required if ProductID is not set.
 	Title string
 	// WebhookURL is an endpoint that we will call with transaction information upon successful checkout, to allow you to fulfill the purchase.
@@ -26,7 +26,7 @@ type GeneratePayLinkRequest struct {
 	// You must also provide the price for the subscription’s default currency.
 	// If a given currency is enabled in the dashboard, it will default to a conversion of the subscription’s default currency price set in this field unless specified here as well.
 	// If the currency specified is not enabled in the dashboard, the currency’s prices must be set as well.
-	RecurringPrices []string
+	RecurringPrices map[string]string
 	// TrialDays is for subscription plans only.
 	// The number of days for the initial billing cycle.
 	// If you leave this field empty, the default trial days of the plan will be used.
@@ -40,7 +40,7 @@ type GeneratePayLinkRequest struct {
 	CouponCode string
 	// Discountable specifies if a coupon can be applied to the checkout.
 	// “Add Coupon” button on the checkout will be hidden as well if set to false.
-	Discountable bool
+	Discountable *bool
 	// ImageURL is a URL for the product image/icon displayed on the checkout.
 	ImageURL string
 	// ReturnURL is a URL to redirect to once the checkout is completed.
@@ -48,7 +48,7 @@ type GeneratePayLinkRequest struct {
 	// (e.g.https://example.com/thanks?checkout={checkout_hash}), the API will automatically populate the Paddle checkout ID in the redirected URL.
 	ReturnURL string
 	// QuantityVariable specifies if the user is allowed to alter the quantity of the checkout.
-	QuantityVariable bool
+	QuantityVariable *bool
 	// Quantity pre-fills the quantity selector on the checkout.Please note that free products/subscription plans are fixed to a quantity of 1.
 	// Any quantity over the maximum value will default to a quantity of 1.
 	Quantity int
@@ -79,7 +79,7 @@ type GeneratePayLinkRequest struct {
 	// IsRecoverable Specifies if checkout recovery emails can be sent to users who abandon the checkout process after entering their email address.
 	// An additional 10% transaction fee applies to checkouts we recover.
 	// This will override the checkout recovery setting specified in your page.
-	IsRecoverable bool
+	IsRecoverable *bool
 	// Passthrough is a string of metadata you wish to store with the checkout.
 	// Will be sent alongside all webhooks associated with the order.
 	// See the documentation for more information.
@@ -103,6 +103,38 @@ type GeneratePayLinkRequest struct {
 	VatCountry string
 	// VatPostcode pre-fills the Postcode field on the checkout.
 	VatPostcode string
+}
+
+type generatePayLinkRequest struct {
+	ProductID               int         `schema:"product_id,omitempty"`
+	Title                   string      `schema:"title,omitempty"`
+	WebhookURL              string      `schema:"webhook_url,omitempty"`
+	Prices                  []string    `schema:"prices,omitempty"`
+	RecurringPrices         []string    `schema:"recurring_prices,omitempty"`
+	TrialDays               int         `schema:"trial_days,omitempty"`
+	CustomMessage           string      `schema:"custom_message,omitempty"`
+	CouponCode              string      `schema:"coupon_code,omitempty"`
+	Discountable            *customBool `schema:"discountable,omitempty"`
+	ImageURL                string      `schema:"image_url,omitempty"`
+	ReturnURL               string      `schema:"return_url,omitempty"`
+	QuantityVariable        *customBool `schema:"quantity_variable,omitempty"`
+	Quantity                int         `schema:"quantity,omitempty"`
+	Expires                 customDate  `schema:"expires,omitempty"`
+	Affiliates              []string    `schema:"affiliates,omitempty"`
+	RecurringAffiliateLimit int         `schema:"recurring_affiliate_limit,omitempty"`
+	MarketingConsent        bool        `schema:"marketing_consent,omitempty"`
+	CustomerEmail           string      `schema:"customer_email,omitempty"`
+	CustomerCountry         string      `schema:"customer_country,omitempty"`
+	CustomerPostcode        string      `schema:"customer_postcode,omitempty"`
+	IsRecoverable           *customBool `schema:"is_recoverable,omitempty"`
+	Passthrough             string      `schema:"passthrough,omitempty"`
+	VatNumber               string      `schema:"vat_number,omitempty"`
+	VatCompanyName          string      `schema:"vat_company_name,omitempty"`
+	VatStreet               string      `schema:"vat_street,omitempty"`
+	VatCity                 string      `schema:"vat_city,omitempty"`
+	VatState                string      `schema:"vat_state,omitempty"`
+	VatCountry              string      `schema:"vat_country,omitempty"`
+	VatPostcode             string      `schema:"vat_postcode,omitempty"`
 }
 
 func (c *Client) GeneratePayLink(ctx context.Context) (url string, err error) {
