@@ -28,6 +28,13 @@ func (cd *customDate) Time() time.Time {
 	return time.Unix(int64(*cd), 0)
 }
 
+func toCustomDate(t time.Time) customDate {
+	if t.IsZero() {
+		return 0
+	}
+	return customDate(t.Unix())
+}
+
 func parseDate(s string) (time.Time, error) {
 	t, err := time.Parse(dateLayout, s)
 	if err != nil {

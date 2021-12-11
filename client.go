@@ -1,13 +1,13 @@
 package paddle
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -56,14 +56,21 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		return nil, err
 	}
 
-	var buf io.ReadWriter
+	var buf io.Reader
+	form := url.Values{}
+	if c.vendorID != "" {
+		form.Set("vendor_id", c.vendorID)
+	}
+	if c.vendorAuthCode != "" {
+		form.Set("vendor_auth_code", c.vendorAuthCode)
+	}
 	if body != nil {
-		buf = &bytes.Buffer{}
-		enc := json.NewEncoder(buf)
-		err := enc.Encode(body)
-		if err != nil {
-			return nil, err
+		if err := encoder.Encode(body, form); err != nil {
+			return nil, errors.WithStack(err)
 		}
+	}
+	if len(form) > 0 {
+		buf = strings.NewReader(form.Encode())
 	}
 
 	req, err := http.NewRequest(method, u.String(), buf)
@@ -71,8 +78,8 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		return nil, err
 	}
 
-	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
+	if method == http.MethodPost {
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	}
 	if c.UserAgent != "" {
 		req.Header.Set("User-Agent", c.UserAgent)

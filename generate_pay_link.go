@@ -2,7 +2,12 @@ package paddle
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type GeneratePayLinkRequest struct {
@@ -105,6 +110,55 @@ type GeneratePayLinkRequest struct {
 	VatPostcode string
 }
 
+func toGeneratePayLinkRequest(request GeneratePayLinkRequest) generatePayLinkRequest {
+	prices := make([]string, 0, len(request.Prices))
+	for currency, price := range request.Prices {
+		prices = append(prices, fmt.Sprintf("%s:%s", currency, price))
+	}
+
+	recurringPrices := make([]string, 0, len(request.RecurringPrices))
+	for currency, price := range request.RecurringPrices {
+		recurringPrices = append(recurringPrices, fmt.Sprintf("%s:%s", currency, price))
+	}
+
+	affiliates := make([]string, 0, len(request.Affiliates))
+	for id, percent := range request.Affiliates {
+		affiliates = append(affiliates, fmt.Sprintf("%s:%s", id, percent))
+	}
+
+	return generatePayLinkRequest{
+		ProductID:               request.ProductID,
+		Title:                   request.Title,
+		WebhookURL:              request.WebhookURL,
+		Prices:                  prices,
+		RecurringPrices:         recurringPrices,
+		TrialDays:               request.TrialDays,
+		CustomMessage:           request.CustomMessage,
+		CouponCode:              request.CouponCode,
+		Discountable:            toCustomBoolPointer(request.Discountable),
+		ImageURL:                request.ImageURL,
+		ReturnURL:               request.ReturnURL,
+		QuantityVariable:        toCustomBoolPointer(request.QuantityVariable),
+		Quantity:                request.Quantity,
+		Expires:                 toCustomDate(request.Expires),
+		Affiliates:              affiliates,
+		RecurringAffiliateLimit: request.RecurringAffiliateLimit,
+		MarketingConsent:        request.MarketingConsent,
+		CustomerEmail:           request.CustomerEmail,
+		CustomerCountry:         request.CustomerCountry,
+		CustomerPostcode:        request.CustomerPostcode,
+		IsRecoverable:           toCustomBoolPointer(request.IsRecoverable),
+		Passthrough:             request.Passthrough,
+		VatNumber:               request.VatNumber,
+		VatCompanyName:          request.VatCompanyName,
+		VatStreet:               request.VatStreet,
+		VatCity:                 request.VatCity,
+		VatState:                request.VatState,
+		VatCountry:              request.VatCountry,
+		VatPostcode:             request.VatPostcode,
+	}
+}
+
 type generatePayLinkRequest struct {
 	ProductID               int         `schema:"product_id,omitempty"`
 	Title                   string      `schema:"title,omitempty"`
@@ -137,6 +191,49 @@ type generatePayLinkRequest struct {
 	VatPostcode             string      `schema:"vat_postcode,omitempty"`
 }
 
+type baseAPIResponse struct {
+	Success bool             `json:"success"`
+	Err     errorAPIResponse `json:"error"`
+}
+
+func (b *baseAPIResponse) Error() string {
+	return fmt.Sprintf("paddle error - %d:%s", b.Err.Code, b.Err.Message)
+}
+
+type errorAPIResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+type generatePayLinkResponse struct {
+	baseAPIResponse
+	Response struct {
+		URL string `json:"url"`
+	} `json:"response"`
+}
+
 func (c *Client) GeneratePayLink(ctx context.Context, request GeneratePayLinkRequest) (url string, err error) {
-	panic("implement me")
+	body := toGeneratePayLinkRequest(request)
+	req, err := c.NewRequest(http.MethodPost, "product/generate_pay_link", body)
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		var data generatePayLinkResponse
+		if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+			return "", errors.WithStack(err)
+		}
+		if data.Success {
+			return data.Response.URL, nil
+		}
+		return "", &data
+	}
+	return "", errors.Errorf("got status code: %d", resp.StatusCode)
 }

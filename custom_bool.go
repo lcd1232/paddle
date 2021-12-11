@@ -19,6 +19,14 @@ func (cb *customBool) UnmarshalText(text []byte) error {
 	return nil
 }
 
+func toCustomBoolPointer(b *bool) *customBool {
+	if b == nil {
+		return nil
+	}
+	cb := customBool(*b)
+	return &cb
+}
+
 func parseBool(s string) (bool, error) {
 	b, err := strconv.ParseBool(s)
 	if err != nil {
