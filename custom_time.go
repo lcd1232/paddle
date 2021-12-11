@@ -22,10 +22,10 @@ func (ct *customTime) UnmarshalText(text []byte) error {
 }
 
 func (ct *customTime) Time() time.Time {
-	if ct == nil {
+	if ct == nil || *ct == 0 {
 		return time.Time{}
 	}
-	return time.Unix(int64(*ct), 0)
+	return time.Unix(int64(*ct), 0).UTC()
 }
 
 func parseTime(s string) (time.Time, error) {

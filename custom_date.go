@@ -22,10 +22,10 @@ func (cd *customDate) UnmarshalText(text []byte) error {
 }
 
 func (cd *customDate) Time() time.Time {
-	if cd == nil {
+	if cd == nil || *cd == 0 {
 		return time.Time{}
 	}
-	return time.Unix(int64(*cd), 0)
+	return time.Unix(int64(*cd), 0).UTC()
 }
 
 func toCustomDate(t time.Time) customDate {

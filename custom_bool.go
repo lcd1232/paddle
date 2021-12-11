@@ -36,8 +36,11 @@ func parseBool(s string) (bool, error) {
 }
 
 func customBoolEncoder(value reflect.Value) string {
-	if value.Kind() == reflect.Ptr && value.IsNil() {
-		return ""
+	if value.Kind() == reflect.Ptr {
+		if value.IsNil() {
+			return ""
+		}
+		value = value.Elem()
 	}
 	b := value.Bool()
 	if b {
