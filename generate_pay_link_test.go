@@ -65,6 +65,23 @@ func TestGeneratePayLink(t *testing.T) {
 			},
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
 		},
+		{
+			name:           "error",
+			vendorID:       "123",
+			vendorAuthCode: "12ac",
+			request: GeneratePayLinkRequest{
+				ProductID: 5,
+			},
+			responseCode: http.StatusOK,
+			responseBody: []byte(`{
+  "success": false,
+  "error": {
+    "code": 130,
+	"message": "The allowed uses must be a number."
+  }
+}`),
+			wantErr: true,
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			WithTestServer(t, tc.responseCode, tc.responseBody, func(url string, rCh <-chan *http.Request) {
