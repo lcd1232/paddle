@@ -64,6 +64,9 @@ func (c *WebhookClient) SetVerification(b bool) {
 
 func parsePublicKey(pubKey string) (*rsa.PublicKey, error) {
 	decoded, _ := pem.Decode([]byte(pubKey))
+	if decoded == nil {
+		return nil, errors.New("invalid public key")
+	}
 	re, err := x509.ParsePKIXPublicKey(decoded.Bytes)
 	if err != nil {
 		return nil, errors.WithStack(err)
