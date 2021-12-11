@@ -137,6 +137,6 @@ type generatePayLinkRequest struct {
 	VatPostcode             string      `schema:"vat_postcode,omitempty"`
 }
 
-func (c *Client) GeneratePayLink(ctx context.Context) (url string, err error) {
+func (c *Client) GeneratePayLink(ctx context.Context, request GeneratePayLinkRequest) (url string, err error) {
 	panic("implement me")
 }

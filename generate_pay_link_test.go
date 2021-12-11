@@ -37,6 +37,7 @@ func TestGeneratePayLink(t *testing.T) {
 		name           string
 		vendorID       string
 		vendorAuthCode string
+		request        GeneratePayLinkRequest
 		responseCode   int
 		responseBody   []byte
 		wantErr        bool
@@ -47,7 +48,10 @@ func TestGeneratePayLink(t *testing.T) {
 			name:           "one parameter only",
 			vendorID:       "123",
 			vendorAuthCode: "12ac",
-			responseCode:   http.StatusOK,
+			request: GeneratePayLinkRequest{
+				ProductID: 5,
+			},
+			responseCode: http.StatusOK,
 			responseBody: []byte(`{
   "success": true,
   "response": {
@@ -66,7 +70,7 @@ func TestGeneratePayLink(t *testing.T) {
 			WithTestServer(t, tc.responseCode, tc.responseBody, func(url string, rCh <-chan *http.Request) {
 				c := NewTestClient(t, url, nil)
 				c.vendorAuthCode, c.vendorID = tc.vendorAuthCode, tc.vendorID
-				urlStr, err := c.GeneratePayLink(context.Background())
+				urlStr, err := c.GeneratePayLink(context.Background(), tc.request)
 				if tc.wantErr {
 					require.Error(t, err)
 					return
