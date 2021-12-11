@@ -69,3 +69,8 @@ func TestCustomBoolEncoder(t *testing.T) {
 		})
 	}
 }
+
+func TestParseBool(t *testing.T) {
+	_, err := parseBool("s")
+	require.Error(t, err)
+}
