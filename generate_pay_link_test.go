@@ -85,8 +85,12 @@ func TestGeneratePayLink(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			WithTestServer(t, tc.responseCode, tc.responseBody, func(url string, rCh <-chan *http.Request) {
-				c := NewTestClient(t, url, nil)
-				c.vendorAuthCode, c.vendorID = tc.vendorAuthCode, tc.vendorID
+				c, err := NewClient(Settings{
+					URL:            url,
+					VendorID:       tc.vendorID,
+					VendorAuthCode: tc.vendorAuthCode,
+				})
+				require.NoError(t, err)
 				urlStr, err := c.GeneratePayLink(context.Background(), tc.request)
 				if tc.wantErr {
 					require.Error(t, err)

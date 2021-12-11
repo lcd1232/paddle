@@ -11,9 +11,17 @@ import (
 )
 
 const (
-	defaultBaseURL = "https://vendors.paddle.com/api/2.0/"
+	DefaultBaseURL = "https://vendors.paddle.com/api/"
+	SandboxBaseURL = "https://sandbox-vendors.paddle.com/api/"
 	userAgent      = "lcd1232-paddle"
 )
+
+type Settings struct {
+	URL            string
+	Client         *http.Client
+	VendorID       string
+	VendorAuthCode string
+}
 
 type Client struct {
 	client         *http.Client
@@ -23,23 +31,25 @@ type Client struct {
 	UserAgent      string
 }
 
-func NewClient(client *http.Client) *Client {
-	if client == nil {
-		client = http.DefaultClient
+func NewClient(settings Settings) (*Client, error) {
+	if settings.URL == "" {
+		settings.URL = DefaultBaseURL
 	}
-	baseURL, _ := url.Parse(defaultBaseURL)
-	return &Client{
-		client:    client,
-		BaseURL:   baseURL,
-		UserAgent: userAgent,
+	if settings.Client == nil {
+		settings.Client = http.DefaultClient
 	}
-}
+	baseURL, err := url.Parse(settings.URL)
+	if err != nil {
+		return nil, err
+	}
 
-func NewClientWithAuthentication(client *http.Client, vendorID string, vendorAuthCode string) *Client {
-	c := NewClient(client)
-	c.vendorID = vendorID
-	c.vendorAuthCode = vendorAuthCode
-	return c
+	return &Client{
+		client:         settings.Client,
+		BaseURL:        baseURL,
+		UserAgent:      userAgent,
+		vendorID:       settings.VendorID,
+		vendorAuthCode: settings.VendorAuthCode,
+	}, nil
 }
 
 // NewRequest creates an API request. A relative URL can be provided in urlStr,
