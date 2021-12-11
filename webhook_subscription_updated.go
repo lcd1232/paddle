@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseSubscriptionUpdatedWebhook(form url.Values) (SubscriptionUpdated, error) {
+func (c *WebhookClient) ParseSubscriptionUpdatedWebhook(form url.Values) (SubscriptionUpdated, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return SubscriptionUpdated{}, errors.WithStack(err)
@@ -24,25 +24,25 @@ func (c *Client) ParseSubscriptionUpdatedWebhook(form url.Values) (SubscriptionU
 		CheckoutID:            suw.CheckoutID,
 		Currency:              suw.Currency,
 		Email:                 suw.Email,
-		EventTime:             time.Time(suw.EventTime),
+		EventTime:             suw.EventTime.Time(),
 		MarketingConsent:      bool(suw.MarketingConsent),
 		NewPrice:              suw.NewPrice,
 		NewQuantity:           int(suw.NewQuantity),
 		NewUnitPrice:          suw.NewUnitPrice,
-		NextBillDate:          time.Time(suw.NextBillDate),
+		NextBillDate:          suw.NextBillDate.Time(),
 		Passthrough:           suw.Passthrough,
 		Status:                Status(suw.Status),
 		SubscriptionID:        suw.SubscriptionID,
 		SubscriptionPlanID:    suw.SubscriptionPlanID,
 		UserID:                suw.UserID,
-		OldNextBillDate:       time.Time(suw.OldNextBillDate),
+		OldNextBillDate:       suw.OldNextBillDate.Time(),
 		OldPrice:              suw.OldPrice,
 		OldQuantity:           int(suw.OldQuantity),
 		OldStatus:             Status(suw.OldStatus),
 		OldSubscriptionPlanID: suw.OldSubscriptionPlanID,
 		OldUnitPrice:          suw.OldUnitPrice,
-		PausedAt:              time.Time(suw.PausedAt),
-		PausedFrom:            time.Time(suw.PausedFrom),
+		PausedAt:              suw.PausedAt.Time(),
+		PausedFrom:            suw.PausedFrom.Time(),
 		PausedReason:          PausedReason(suw.PausedReason),
 	}
 	return sc, nil

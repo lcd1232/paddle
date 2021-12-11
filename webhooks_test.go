@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func NewTestClient() (*Client, *verifierMock) {
+func NewTestWebhookClient() (*WebhookClient, *verifierMock) {
 	vm := new(verifierMock)
-	return &Client{
+	return &WebhookClient{
 		verifier: vm,
 	}, vm
 }
@@ -130,11 +130,21 @@ func Test_parseBool(t *testing.T) {
 }
 
 func TestSetVerification(t *testing.T) {
-	c := Client{}
+	c := WebhookClient{}
 	c.SetVerification(true)
 	_, ok := c.verifier.(*realVerifier)
 	assert.True(t, ok)
 	c.SetVerification(false)
 	_, ok = c.verifier.(*noonVerifier)
 	assert.True(t, ok)
+}
+
+func TestNewWebhookClient(t *testing.T) {
+	_, err := NewWebhookClient("")
+	require.Error(t, err)
+
+	wc, err := NewWebhookClient(publicKey)
+	require.NoError(t, err)
+	assert.NotNil(t, wc.publicKey)
+	assert.NotNil(t, wc.verifier)
 }

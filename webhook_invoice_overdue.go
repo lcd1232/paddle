@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseInvoiceOverdueWebhook(form url.Values) (InvoiceOverdue, error) {
+func (c *WebhookClient) ParseInvoiceOverdueWebhook(form url.Values) (InvoiceOverdue, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return InvoiceOverdue{}, errors.WithStack(err)
@@ -25,7 +25,7 @@ func (c *Client) ParseInvoiceOverdueWebhook(form url.Values) (InvoiceOverdue, er
 		TermDays:                     iow.TermDays,
 		Status:                       Status(iow.Status),
 		PurchaseOrderNumber:          iow.PurchaseOrderNumber,
-		InvoicedAt:                   time.Time(iow.InvoicedAt),
+		InvoicedAt:                   iow.InvoicedAt.Time(),
 		Currency:                     iow.Currency,
 		ProductID:                    iow.ProductID,
 		ProductName:                  iow.ProductName,
@@ -41,16 +41,16 @@ func (c *Client) ParseInvoiceOverdueWebhook(form url.Values) (InvoiceOverdue, er
 		CustomerZipcode:              iow.CustomerZipcode,
 		Country:                      iow.Country,
 		ContractID:                   iow.ContractID,
-		ContractStartDate:            time.Time(iow.ContractStartDate),
-		ContractEndDate:              time.Time(iow.ContractEndDate),
+		ContractStartDate:            iow.ContractStartDate.Time(),
+		ContractEndDate:              iow.ContractEndDate.Time(),
 		Passthrough:                  iow.Passthrough,
-		DateCreated:                  time.Time(iow.DateCreated),
+		DateCreated:                  iow.DateCreated.Time(),
 		BalanceCurrency:              iow.BalanceCurrency,
 		PaymentTax:                   iow.PaymentTax,
 		PaymentMethod:                PaymentMethod(iow.PaymentMethod),
 		Fee:                          iow.Fee,
 		Earnings:                     iow.Earnings,
-		EventTime:                    time.Time(iow.EventTime),
+		EventTime:                    iow.EventTime.Time(),
 	}
 	return io, nil
 }

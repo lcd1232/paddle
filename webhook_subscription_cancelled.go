@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseSubscriptionCancelledWebhook(form url.Values) (SubscriptionCancelled, error) {
+func (c *WebhookClient) ParseSubscriptionCancelledWebhook(form url.Values) (SubscriptionCancelled, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return SubscriptionCancelled{}, errors.WithStack(err)
@@ -19,11 +19,11 @@ func (c *Client) ParseSubscriptionCancelledWebhook(form url.Values) (Subscriptio
 	sc := SubscriptionCancelled{
 		AlertName:                 Alert(scw.AlertName),
 		AlertID:                   scw.AlertID,
-		CancellationEffectiveDate: time.Time(scw.CancellationEffectiveDate),
+		CancellationEffectiveDate: scw.CancellationEffectiveDate.Time(),
 		CheckoutID:                scw.CheckoutID,
 		Currency:                  scw.Currency,
 		Email:                     scw.Email,
-		EventTime:                 time.Time(scw.EventTime),
+		EventTime:                 scw.EventTime.Time(),
 		MarketingConsent:          bool(scw.MarketingConsent),
 		Passthrough:               scw.Passthrough,
 		Quantity:                  int(scw.Quantity),

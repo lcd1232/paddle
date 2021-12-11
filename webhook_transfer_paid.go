@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseTransferPaidWebhook(form url.Values) (TransferPaid, error) {
+func (c *WebhookClient) ParseTransferPaidWebhook(form url.Values) (TransferPaid, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return TransferPaid{}, errors.WithStack(err)
@@ -21,7 +21,7 @@ func (c *Client) ParseTransferPaidWebhook(form url.Values) (TransferPaid, error)
 		AlertID:   tpw.AlertID,
 		Amount:    tpw.Amount,
 		Currency:  tpw.Currency,
-		EventTime: time.Time(tpw.EventTime),
+		EventTime: tpw.EventTime.Time(),
 		PayoutID:  tpw.PayoutID,
 		Status:    Status(tpw.Status),
 	}

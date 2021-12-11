@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
+func (c *WebhookClient) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return InvoicePaid{}, errors.WithStack(err)
@@ -25,7 +25,7 @@ func (c *Client) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
 		TermDays:                     ipw.TermDays,
 		Status:                       Status(ipw.Status),
 		PurchaseOrderNumber:          ipw.PurchaseOrderNumber,
-		InvoicedAt:                   time.Time(ipw.InvoicedAt),
+		InvoicedAt:                   ipw.InvoicedAt.Time(),
 		Currency:                     ipw.Currency,
 		ProductID:                    ipw.ProductID,
 		ProductName:                  ipw.ProductName,
@@ -41,10 +41,10 @@ func (c *Client) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
 		CustomerZipcode:              ipw.CustomerZipcode,
 		Country:                      ipw.Country,
 		ContractID:                   ipw.ContractID,
-		ContractStartDate:            time.Time(ipw.ContractStartDate),
-		ContractEndDate:              time.Time(ipw.ContractEndDate),
+		ContractStartDate:            ipw.ContractStartDate.Time(),
+		ContractEndDate:              ipw.ContractEndDate.Time(),
 		Passthrough:                  ipw.Passthrough,
-		DateCreated:                  time.Time(ipw.DateCreated),
+		DateCreated:                  ipw.DateCreated.Time(),
 		BalanceCurrency:              ipw.BalanceCurrency,
 		PaymentTax:                   ipw.PaymentTax,
 		PaymentMethod:                PaymentMethod(ipw.PaymentMethod),
@@ -54,8 +54,8 @@ func (c *Client) ParseInvoicePaidWebhook(form url.Values) (InvoicePaid, error) {
 		BalanceFee:                   ipw.BalanceFee,
 		BalanceTax:                   ipw.BalanceTax,
 		BalanceGross:                 ipw.BalanceGross,
-		DateReconciled:               time.Time(ipw.DateReconciled),
-		EventTime:                    time.Time(ipw.EventTime),
+		DateReconciled:               ipw.DateReconciled.Time(),
+		EventTime:                    ipw.EventTime.Time(),
 	}
 	return ip, nil
 }
