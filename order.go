@@ -2,7 +2,11 @@ package paddle
 
 import (
 	"context"
+	"encoding/json"
+	"net/http"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type OrderResponse struct {
@@ -57,8 +61,37 @@ type Checkout struct {
 
 type orderResponse struct {
 	baseAPIResponse
+	OrderResponse
 }
 
-func (c *Client) Order(ctx context.Context, orderID string) (*OrderResponse, error) {
-	panic("implement me")
+type orderRequest struct {
+	CheckoutID string `schema:"checkout_id"`
+}
+
+func (c *Client) Order(ctx context.Context, checkoutID string) (*OrderResponse, error) {
+	req, err := c.NewRequest(http.MethodGet, "1.0/order", orderRequest{
+		CheckoutID: checkoutID,
+	})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	req = req.WithContext(ctx)
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		var data orderResponse
+		if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+			return nil, errors.WithStack(err)
+		}
+		if data.IsSuccess() {
+			return &data.OrderResponse, nil
+		}
+		return nil, &data
+	}
+	return nil, errors.Errorf("got status code: %d", resp.StatusCode)
 }

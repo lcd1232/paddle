@@ -15,7 +15,7 @@ import (
 func TestOrder(t *testing.T) {
 	for _, tc := range []struct {
 		name         string
-		orderID      string
+		checkoutID   string
 		responseCode int
 		responseBody func(t *testing.T) []byte
 		context      func() (context.Context, context.CancelFunc)
@@ -25,7 +25,7 @@ func TestOrder(t *testing.T) {
 	}{
 		{
 			name:         "success order",
-			orderID:      "219233-chre53d41f940e0-58aqh94971",
+			checkoutID:   "219233-chre53d41f940e0-58aqh94971",
 			responseCode: http.StatusOK,
 			responseBody: func(t *testing.T) []byte {
 				b, err := ioutil.ReadFile("testdata/order-1.json")
@@ -86,7 +86,7 @@ func TestOrder(t *testing.T) {
 					URL: url,
 				})
 				require.NoError(t, err)
-				order, err := c.Order(ctx, tc.orderID)
+				order, err := c.Order(ctx, tc.checkoutID)
 				if tc.wantErr {
 					require.Error(t, err)
 					return

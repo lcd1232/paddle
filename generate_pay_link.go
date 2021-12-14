@@ -192,8 +192,15 @@ type generatePayLinkRequest struct {
 }
 
 type baseAPIResponse struct {
-	Success bool             `json:"success"`
+	Success *bool            `json:"success"`
 	Err     errorAPIResponse `json:"error"`
+}
+
+func (b *baseAPIResponse) IsSuccess() bool {
+	if b.Success == nil || *b.Success {
+		return true
+	}
+	return false
 }
 
 func (b *baseAPIResponse) Error() string {
@@ -231,7 +238,7 @@ func (c *Client) GeneratePayLink(ctx context.Context, request GeneratePayLinkReq
 		if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
 			return "", errors.WithStack(err)
 		}
-		if data.Success {
+		if data.IsSuccess() {
 			return data.Response.URL, nil
 		}
 		return "", &data
