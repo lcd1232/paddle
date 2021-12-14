@@ -96,6 +96,7 @@ func TestOrder(t *testing.T) {
 				r := <-rCh
 				require.NoError(t, r.ParseForm())
 				assert.Equal(t, tc.wantQuery, r.URL.Query())
+				assert.Equal(t, "/1.0/order", r.URL.Path)
 			})
 		})
 	}
