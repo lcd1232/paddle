@@ -45,7 +45,7 @@ func TestAudience(t *testing.T) {
 			responseBody:     []byte(`{"user_id": 10}`),
 			wantQuery: map[string][]string{
 				"email":             {"user@example.com"},
-				"marketing_consent": {"1"},
+				"marketing_consent": {"0"},
 			},
 			wantUserID: 10,
 		},
@@ -79,8 +79,10 @@ func TestAudience(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name:    "empty vendor id",
-			wantErr: true,
+			name:         "empty vendor id",
+			wantErr:      true,
+			responseCode: http.StatusOK,
+			responseBody: []byte(`{}`),
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -98,7 +100,7 @@ func TestAudience(t *testing.T) {
 				require.NoError(t, err)
 				assert.Equal(t, tc.wantUserID, userID)
 				r := <-rCh
-				assert.Equal(t, fmt.Sprintf("api/1.0/audience/%s/add", tc.vendorID), r.URL.Path)
+				assert.Equal(t, fmt.Sprintf("/1.0/audience/%s/add", tc.vendorID), r.URL.Path)
 				assert.Equal(t, http.MethodGet, r.Method)
 				assert.Equal(t, tc.wantQuery, r.URL.Query())
 			})

@@ -1,6 +1,7 @@
 package paddle
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -72,22 +73,28 @@ func NewClient(settings Settings) (*Client, error) {
 // Relative URLs should always be specified without a preceding slash. If
 // specified, the value pointed to by body is JSON encoded and included as the
 // request body.
-func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
-	if !strings.HasSuffix(c.BaseURL.Path, "/") {
+func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body interface{}, checkoutURL, authenticate bool) (*http.Request, error) {
+	u := c.BaseURL
+	if checkoutURL {
+		u = c.CheckoutBaseURL
+	}
+	if !strings.HasSuffix(u.Path, "/") {
 		return nil, fmt.Errorf("BaseURL must have a trailing slash, but %q does not", c.BaseURL)
 	}
-	u, err := c.BaseURL.Parse(urlStr)
+	u, err := u.Parse(urlStr)
 	if err != nil {
 		return nil, err
 	}
 
 	var buf io.Reader
 	form := url.Values{}
-	if c.vendorID != "" {
-		form.Set("vendor_id", c.vendorID)
-	}
-	if c.vendorAuthCode != "" {
-		form.Set("vendor_auth_code", c.vendorAuthCode)
+	if authenticate {
+		if c.vendorID != "" {
+			form.Set("vendor_id", c.vendorID)
+		}
+		if c.vendorAuthCode != "" {
+			form.Set("vendor_auth_code", c.vendorAuthCode)
+		}
 	}
 	if body != nil {
 		if err := encoder.Encode(body, form); err != nil {
@@ -95,10 +102,14 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		}
 	}
 	if len(form) > 0 {
-		buf = strings.NewReader(form.Encode())
+		if method == http.MethodGet {
+			u.RawQuery = form.Encode()
+		} else {
+			buf = strings.NewReader(form.Encode())
+		}
 	}
 
-	req, err := http.NewRequest(method, u.String(), buf)
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), buf)
 	if err != nil {
 		return nil, err
 	}
