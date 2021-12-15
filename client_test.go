@@ -10,6 +10,7 @@ import (
 func TestNewClient(t *testing.T) {
 	c, err := NewClient(Settings{
 		URL:            SandboxBaseURL,
+		CheckoutURL:    SandboxCheckoutBaseURL,
 		VendorID:       "123",
 		VendorAuthCode: "123abc",
 	})
@@ -17,6 +18,7 @@ func TestNewClient(t *testing.T) {
 	require.NotNil(t, c)
 	assert.NotNil(t, c.client)
 	assert.NotNil(t, c.BaseURL)
+	assert.NotNil(t, c.CheckoutBaseURL)
 	assert.Equal(t, userAgent, c.UserAgent)
 	assert.Equal(t, "123", c.vendorID)
 	assert.Equal(t, "123abc", c.vendorAuthCode)
@@ -28,6 +30,7 @@ func TestNewClientEmptySettings(t *testing.T) {
 	require.NotNil(t, c)
 	assert.NotNil(t, c.client)
 	assert.NotNil(t, c.BaseURL)
+	assert.NotNil(t, c.CheckoutBaseURL)
 	assert.Equal(t, userAgent, c.UserAgent)
 }
 

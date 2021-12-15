@@ -11,24 +11,30 @@ import (
 )
 
 const (
-	DefaultBaseURL = "https://vendors.paddle.com/api/"
-	SandboxBaseURL = "https://sandbox-vendors.paddle.com/api/"
-	userAgent      = "lcd1232-paddle"
+	DefaultBaseURL         = "https://vendors.paddle.com/api/"
+	DefaultCheckoutBaseURL = "https://checkout.paddle.com/api/"
+
+	SandboxBaseURL         = "https://sandbox-vendors.paddle.com/api/"
+	SandboxCheckoutBaseURL = "https://sandbox-checkout.paddle.com/api/"
+
+	userAgent = "lcd1232-paddle"
 )
 
 type Settings struct {
 	URL            string
+	CheckoutURL    string
 	Client         *http.Client
 	VendorID       string
 	VendorAuthCode string
 }
 
 type Client struct {
-	client         *http.Client
-	vendorID       string
-	vendorAuthCode string
-	BaseURL        *url.URL
-	UserAgent      string
+	client          *http.Client
+	vendorID        string
+	vendorAuthCode  string
+	BaseURL         *url.URL
+	CheckoutBaseURL *url.URL
+	UserAgent       string
 }
 
 func NewClient(settings Settings) (*Client, error) {
