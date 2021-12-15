@@ -20,6 +20,9 @@ type audienceRequest struct {
 }
 
 func (c *Client) Audience(ctx context.Context, email string, marketingConsent bool) (userID int, err error) {
+	if c.vendorID == "" {
+		return 0, errors.New("paddle: vendor_id is required")
+	}
 	body := audienceRequest{
 		Email:            email,
 		MarketingConsent: customBool(marketingConsent),
