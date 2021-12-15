@@ -41,6 +41,9 @@ func NewClient(settings Settings) (*Client, error) {
 	if settings.URL == "" {
 		settings.URL = DefaultBaseURL
 	}
+	if settings.CheckoutURL == "" {
+		settings.CheckoutURL = DefaultCheckoutBaseURL
+	}
 	if settings.Client == nil {
 		settings.Client = http.DefaultClient
 	}
@@ -49,12 +52,18 @@ func NewClient(settings Settings) (*Client, error) {
 		return nil, err
 	}
 
+	checkoutBaseURL, err := url.Parse(settings.CheckoutURL)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Client{
-		client:         settings.Client,
-		BaseURL:        baseURL,
-		UserAgent:      userAgent,
-		vendorID:       settings.VendorID,
-		vendorAuthCode: settings.VendorAuthCode,
+		client:          settings.Client,
+		BaseURL:         baseURL,
+		CheckoutBaseURL: checkoutBaseURL,
+		UserAgent:       userAgent,
+		vendorID:        settings.VendorID,
+		vendorAuthCode:  settings.VendorAuthCode,
 	}, nil
 }
 
