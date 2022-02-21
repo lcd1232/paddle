@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,7 +43,7 @@ func TestGeneratePayLink(t *testing.T) {
 		responseCode   int
 		responseBody   []byte
 		wantErr        bool
-		wantForm       url.Values
+		wantForm       func(t *testing.T, values url.Values)
 		wantURL        string
 	}{
 		{
@@ -59,10 +60,12 @@ func TestGeneratePayLink(t *testing.T) {
     "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
   }
 }`),
-			wantForm: map[string][]string{
-				"vendor_id":        {"123"},
-				"vendor_auth_code": {"12ac"},
-				"product_id":       {"5"},
+			wantForm: func(t *testing.T, values url.Values) {
+				assert.Equal(t, map[string][]string{
+					"vendor_id":        {"123"},
+					"vendor_auth_code": {"12ac"},
+					"product_id":       {"5"},
+				}, values)
 			},
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
 		},
@@ -84,12 +87,17 @@ func TestGeneratePayLink(t *testing.T) {
     "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
   }
 }`),
-			wantForm: map[string][]string{
-				"vendor_id":        {"123"},
-				"vendor_auth_code": {"12ac"},
-				"product_id":       {"5"},
-				"prices[0]":        {"USD:4.99"},
-				"prices[1]":        {"RUB:199.99"},
+			wantForm: func(t *testing.T, values url.Values) {
+				assert.Equal(t, "123", values.Get("vendor_id"))
+				assert.Equal(t, "12ac", values.Get("vendor_auth_code"))
+				assert.Equal(t, "5", values.Get("product_id"))
+				if strings.Contains(values.Get("prices[0]"), "USD") {
+					assert.Equal(t, "4.99", values.Get("prices[0]"))
+					assert.Equal(t, "199.99", values.Get("prices[1]"))
+				} else {
+					assert.Equal(t, "199.99", values.Get("prices[0]"))
+					assert.Equal(t, "4.99", values.Get("prices[1]"))
+				}
 			},
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
 		},
@@ -115,14 +123,24 @@ func TestGeneratePayLink(t *testing.T) {
     "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
   }
 }`),
-			wantForm: map[string][]string{
-				"vendor_id":           {"123"},
-				"vendor_auth_code":    {"12ac"},
-				"product_id":          {"5"},
-				"prices[0]":           {"USD:4.99"},
-				"prices[1]":           {"RUB:199.99"},
-				"recurring_prices[0]": {"USD:9.99"},
-				"recurring_prices[1]": {"RUB:399.99"},
+			wantForm: func(t *testing.T, values url.Values) {
+				assert.Equal(t, "123", values.Get("vendor_id"))
+				assert.Equal(t, "12ac", values.Get("vendor_auth_code"))
+				assert.Equal(t, "5", values.Get("product_id"))
+				if strings.Contains(values.Get("prices[0]"), "USD") {
+					assert.Equal(t, "4.99", values.Get("prices[0]"))
+					assert.Equal(t, "199.99", values.Get("prices[1]"))
+				} else {
+					assert.Equal(t, "199.99", values.Get("prices[0]"))
+					assert.Equal(t, "4.99", values.Get("prices[1]"))
+				}
+				if strings.Contains(values.Get("recurring_prices[0]"), "USD") {
+					assert.Equal(t, "9.99", values.Get("recurring_prices[0]"))
+					assert.Equal(t, "399.99", values.Get("recurring_prices[1]"))
+				} else {
+					assert.Equal(t, "399.99", values.Get("recurring_prices[0]"))
+					assert.Equal(t, "9.99", values.Get("recurring_prices[1]"))
+				}
 			},
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
 		},
@@ -177,7 +195,7 @@ func TestGeneratePayLink(t *testing.T) {
 				assert.Equal(t, tc.wantURL, urlStr)
 				r := <-rCh
 				require.NoError(t, r.ParseForm())
-				assert.Equal(t, tc.wantForm, r.PostForm)
+				tc.wantForm(t, r.PostForm)
 			})
 		})
 	}
