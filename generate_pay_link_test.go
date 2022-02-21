@@ -75,6 +75,7 @@ func TestGeneratePayLink(t *testing.T) {
 			vendorAuthCode: "12ac",
 			request: GeneratePayLinkRequest{
 				ProductID:        5,
+				CustomerEmail:    "user@example.com",
 				MarketingConsent: true,
 			},
 			responseCode: http.StatusOK,
@@ -89,6 +90,7 @@ func TestGeneratePayLink(t *testing.T) {
 					"vendor_id":         {"123"},
 					"vendor_auth_code":  {"12ac"},
 					"product_id":        {"5"},
+					"customer_email":    {"user@example.com"},
 					"marketing_consent": {"1"},
 				}, values)
 			},

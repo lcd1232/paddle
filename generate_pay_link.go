@@ -143,7 +143,7 @@ func toGeneratePayLinkRequest(request GeneratePayLinkRequest) generatePayLinkReq
 		Expires:                 toCustomDate(request.Expires),
 		Affiliates:              affiliates,
 		RecurringAffiliateLimit: request.RecurringAffiliateLimit,
-		MarketingConsent:        request.MarketingConsent,
+		MarketingConsent:        customBool(request.MarketingConsent),
 		CustomerEmail:           request.CustomerEmail,
 		CustomerCountry:         request.CustomerCountry,
 		CustomerPostcode:        request.CustomerPostcode,
@@ -176,7 +176,7 @@ type generatePayLinkRequest struct {
 	Expires                 customDate  `schema:"expires,omitempty"`
 	Affiliates              []string    `schema:"affiliates,omitempty"`
 	RecurringAffiliateLimit int         `schema:"recurring_affiliate_limit,omitempty"`
-	MarketingConsent        bool        `schema:"marketing_consent,omitempty"`
+	MarketingConsent        customBool  `schema:"marketing_consent,omitempty"`
 	CustomerEmail           string      `schema:"customer_email,omitempty"`
 	CustomerCountry         string      `schema:"customer_country,omitempty"`
 	CustomerPostcode        string      `schema:"customer_postcode,omitempty"`
