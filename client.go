@@ -68,6 +68,13 @@ func NewClient(settings Settings) (*Client, error) {
 	}, nil
 }
 
+// arrayKeys contains list of keys that should be converted from "key" form to "key[i]"
+var arrayKeys = map[string]struct{}{
+	"prices":           {},
+	"recurring_prices": {},
+	"affiliates":       {},
+}
+
 // NewRequest creates an API request. A relative URL can be provided in urlStr,
 // in which case it is resolved relative to the BaseURL of the Client.
 // Relative URLs should always be specified without a preceding slash. If
@@ -102,12 +109,13 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		}
 	}
 	for key := range form {
-		if len(form[key]) > 1 {
-			for i, v := range form[key] {
-				form.Set(fmt.Sprintf("%s[%d]", key, i), v)
-			}
-			form.Del(key)
+		if _, exists := arrayKeys[key]; !exists {
+			continue
 		}
+		for i, v := range form[key] {
+			form.Set(fmt.Sprintf("%s[%d]", key, i), v)
+		}
+		form.Del(key)
 	}
 	if len(form) > 0 {
 		if method == http.MethodGet {
