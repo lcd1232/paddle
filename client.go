@@ -109,12 +109,13 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr string, body int
 		}
 	}
 	for key := range form {
-		if len(form[key]) > 1 {
-			for i, v := range form[key] {
-				form.Set(fmt.Sprintf("%s[%d]", key, i), v)
-			}
-			form.Del(key)
+		if _, exists := arrayKeys[key]; !exists {
+			continue
 		}
+		for i, v := range form[key] {
+			form.Set(fmt.Sprintf("%s[%d]", key, i), v)
+		}
+		form.Del(key)
 	}
 	if len(form) > 0 {
 		if method == http.MethodGet {
