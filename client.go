@@ -68,6 +68,13 @@ func NewClient(settings Settings) (*Client, error) {
 	}, nil
 }
 
+// arrayKeys contains list of keys that should be converted from "key" form to "key[i]"
+var arrayKeys = map[string]struct{}{
+	"prices":           {},
+	"recurring_prices": {},
+	"affiliates":       {},
+}
+
 // NewRequest creates an API request. A relative URL can be provided in urlStr,
 // in which case it is resolved relative to the BaseURL of the Client.
 // Relative URLs should always be specified without a preceding slash. If
