@@ -70,6 +70,33 @@ func TestGeneratePayLink(t *testing.T) {
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
 		},
 		{
+			name:           "marketing consent",
+			vendorID:       "123",
+			vendorAuthCode: "12ac",
+			request: GeneratePayLinkRequest{
+				ProductID:        5,
+				CustomerEmail:    "user@example.com",
+				MarketingConsent: true,
+			},
+			responseCode: http.StatusOK,
+			responseBody: []byte(`{
+  "success": true,
+  "response": {
+    "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
+  }
+}`),
+			wantForm: func(t *testing.T, values url.Values) {
+				assert.Equal(t, url.Values{
+					"vendor_id":         {"123"},
+					"vendor_auth_code":  {"12ac"},
+					"product_id":        {"5"},
+					"customer_email":    {"user@example.com"},
+					"marketing_consent": {"1"},
+				}, values)
+			},
+			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
+		},
+		{
 			name:           "prices",
 			vendorID:       "123",
 			vendorAuthCode: "12ac",
