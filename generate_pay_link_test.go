@@ -61,7 +61,7 @@ func TestGeneratePayLink(t *testing.T) {
   }
 }`),
 			wantForm: func(t *testing.T, values url.Values) {
-				assert.Equal(t, map[string][]string{
+				assert.Equal(t, url.Values{
 					"vendor_id":        {"123"},
 					"vendor_auth_code": {"12ac"},
 					"product_id":       {"5"},
@@ -92,11 +92,11 @@ func TestGeneratePayLink(t *testing.T) {
 				assert.Equal(t, "12ac", values.Get("vendor_auth_code"))
 				assert.Equal(t, "5", values.Get("product_id"))
 				if strings.Contains(values.Get("prices[0]"), "USD") {
-					assert.Equal(t, "4.99", values.Get("prices[0]"))
-					assert.Equal(t, "199.99", values.Get("prices[1]"))
+					assert.Equal(t, "USD:4.99", values.Get("prices[0]"))
+					assert.Equal(t, "RUB:199.99", values.Get("prices[1]"))
 				} else {
-					assert.Equal(t, "199.99", values.Get("prices[0]"))
-					assert.Equal(t, "4.99", values.Get("prices[1]"))
+					assert.Equal(t, "RUB:199.99", values.Get("prices[0]"))
+					assert.Equal(t, "USD:4.99", values.Get("prices[1]"))
 				}
 			},
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
@@ -128,18 +128,18 @@ func TestGeneratePayLink(t *testing.T) {
 				assert.Equal(t, "12ac", values.Get("vendor_auth_code"))
 				assert.Equal(t, "5", values.Get("product_id"))
 				if strings.Contains(values.Get("prices[0]"), "USD") {
-					assert.Equal(t, "4.99", values.Get("prices[0]"))
-					assert.Equal(t, "199.99", values.Get("prices[1]"))
+					assert.Equal(t, "USD:4.99", values.Get("prices[0]"))
+					assert.Equal(t, "RUB:199.99", values.Get("prices[1]"))
 				} else {
-					assert.Equal(t, "199.99", values.Get("prices[0]"))
-					assert.Equal(t, "4.99", values.Get("prices[1]"))
+					assert.Equal(t, "RUB:199.99", values.Get("prices[0]"))
+					assert.Equal(t, "USD:4.99", values.Get("prices[1]"))
 				}
 				if strings.Contains(values.Get("recurring_prices[0]"), "USD") {
-					assert.Equal(t, "9.99", values.Get("recurring_prices[0]"))
-					assert.Equal(t, "399.99", values.Get("recurring_prices[1]"))
+					assert.Equal(t, "USD:9.99", values.Get("recurring_prices[0]"))
+					assert.Equal(t, "RUB:399.99", values.Get("recurring_prices[1]"))
 				} else {
-					assert.Equal(t, "399.99", values.Get("recurring_prices[0]"))
-					assert.Equal(t, "9.99", values.Get("recurring_prices[1]"))
+					assert.Equal(t, "RUB:399.99", values.Get("recurring_prices[0]"))
+					assert.Equal(t, "USD:9.99", values.Get("recurring_prices[1]"))
 				}
 			},
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
