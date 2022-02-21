@@ -67,6 +67,66 @@ func TestGeneratePayLink(t *testing.T) {
 			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
 		},
 		{
+			name:           "prices",
+			vendorID:       "123",
+			vendorAuthCode: "12ac",
+			request: GeneratePayLinkRequest{
+				ProductID: 5,
+				Prices: map[string]string{
+					"USD": "4.99",
+					"RUB": "199.99",
+				},
+			},
+			responseCode: http.StatusOK,
+			responseBody: []byte(`{
+  "success": true,
+  "response": {
+    "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
+  }
+}`),
+			wantForm: map[string][]string{
+				"vendor_id":        {"123"},
+				"vendor_auth_code": {"12ac"},
+				"product_id":       {"5"},
+				"prices[0]":        {"USD:4.99"},
+				"prices[1]":        {"RUB:199.99"},
+			},
+			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
+		},
+		{
+			name:           "prices + recurring prices",
+			vendorID:       "123",
+			vendorAuthCode: "12ac",
+			request: GeneratePayLinkRequest{
+				ProductID: 5,
+				Prices: map[string]string{
+					"USD": "4.99",
+					"RUB": "199.99",
+				},
+				RecurringPrices: map[string]string{
+					"USD": "9.99",
+					"RUB": "399.99",
+				},
+			},
+			responseCode: http.StatusOK,
+			responseBody: []byte(`{
+  "success": true,
+  "response": {
+    "url": "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ"
+  }
+}`),
+			wantForm: map[string][]string{
+				"vendor_id":           {"123"},
+				"vendor_auth_code":    {"12ac"},
+				"product_id":          {"5"},
+				"prices[0]":           {"USD:4.99"},
+				"prices[1]":           {"RUB:199.99"},
+				"recurring_prices[0]": {"USD:9.99"},
+				"recurring_prices[1]": {"RUB:399.99"},
+			},
+			wantURL: "https://checkout.paddle.com/checkout/custom/eyJ0IjoiUHJvZ",
+		},
+		{
 			name:           "error",
 			vendorID:       "123",
 			vendorAuthCode: "12ac",
