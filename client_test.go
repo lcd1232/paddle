@@ -1,6 +1,7 @@
 package paddle
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -39,4 +40,30 @@ func TestNewClientInvalidURL(t *testing.T) {
 		URL: "http\\:a",
 	})
 	require.Error(t, err)
+}
+
+func newSandboxClient(t *testing.T) *Client {
+	t.Helper()
+	vendorID := os.Getenv("TEST_PADDLE_VENDOR_ID")
+	authCode := os.Getenv("TEST_PADDLE_AUTH_CODE")
+	if vendorID == "" || authCode == "" {
+		t.Skip("vendor_id or auth_code not set")
+	}
+	c, err := NewClient(Settings{
+		URL:            SandboxBaseURL,
+		CheckoutURL:    SandboxCheckoutBaseURL,
+		VendorID:       vendorID,
+		VendorAuthCode: authCode,
+	})
+	require.NoError(t, err)
+	return c
+}
+
+func getEnv(t *testing.T, name string) string {
+	t.Helper()
+	v := os.Getenv(name)
+	if v == "" {
+		t.Skipf("%s not set", name)
+	}
+	return v
 }

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -120,4 +121,20 @@ func TestGeneratePayLink(t *testing.T) {
 			})
 		})
 	}
+}
+
+func TestGeneratePayLinkSandbox(t *testing.T) {
+	client := newSandboxClient(t)
+	productIDStr := getEnv(t, "TEST_PRODUCT_ID")
+	productID, err := strconv.Atoi(productIDStr)
+	require.NoError(t, err)
+	urlStr, err := client.GeneratePayLink(context.Background(), GeneratePayLinkRequest{
+		ProductID: productID,
+		Prices: map[string]string{
+			"USD": "9.99",
+			"EUR": "8.99",
+		},
+	})
+	require.NoError(t, err)
+	assert.NotEmpty(t, urlStr)
 }
