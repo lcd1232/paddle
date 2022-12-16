@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/pkg/errors"
 )
@@ -17,26 +16,26 @@ type OrderResponse struct {
 }
 
 type OrderInfo struct {
-	Completed                  time.Time
-	CouponCode                 *string       `json:"coupon_code"`
-	Currency                   string        `json:"currency"`
-	Customer                   OrderCustomer `json:"customer"`
-	CustomerSuccessRedirectUrl string        `json:"customer_success_redirect_url"`
-	FormattedTax               string        `json:"formatted_tax"`
-	FormattedTotal             string        `json:"formatted_total"`
-	HasLocker                  bool          `json:"has_locker"`
-	IsSubscription             bool          `json:"is_subscription"`
-	OrderId                    int64         `json:"order_id"`
-	Quantity                   int           `json:"quantity"`
-	ReceiptUrl                 string        `json:"receipt_url"`
-	Total                      string        `json:"total"`
-	TotalTax                   string        `json:"total_tax"`
+	Completed                  OrderCompleted `json:"completed"`
+	CouponCode                 *string        `json:"coupon_code"`
+	Currency                   string         `json:"currency"`
+	Customer                   OrderCustomer  `json:"customer"`
+	CustomerSuccessRedirectUrl string         `json:"customer_success_redirect_url"`
+	FormattedTax               string         `json:"formatted_tax"`
+	FormattedTotal             string         `json:"formatted_total"`
+	HasLocker                  bool           `json:"has_locker"`
+	IsSubscription             bool           `json:"is_subscription"`
+	OrderId                    int64          `json:"order_id"`
+	Quantity                   int            `json:"quantity"`
+	ReceiptUrl                 string         `json:"receipt_url"`
+	Total                      string         `json:"total"`
+	TotalTax                   string         `json:"total_tax"`
 }
 
 type OrderCompleted struct {
-	Date         time.Time `json:"date"`
-	Timezone     string    `json:"timezone"`
-	TimezoneType int       `json:"timezone_type"`
+	Date         Time   `json:"date"`
+	Timezone     string `json:"timezone"`
+	TimezoneType int    `json:"timezone_type"`
 }
 
 type OrderCustomer struct {
@@ -68,14 +67,15 @@ type orderRequest struct {
 	CheckoutID string `schema:"checkout_id"`
 }
 
+// Order return order details.
+// For more - https://developer.paddle.com/api-reference/fea392d1e2f4f-get-order-details
 func (c *Client) Order(ctx context.Context, checkoutID string) (*OrderResponse, error) {
-	req, err := c.NewRequest(http.MethodGet, "1.0/order", orderRequest{
+	req, err := c.NewRequest(ctx, http.MethodGet, "1.0/order", orderRequest{
 		CheckoutID: checkoutID,
 	})
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	req = req.WithContext(ctx)
 
 	resp, err := c.client.Do(req)
 	if err != nil {

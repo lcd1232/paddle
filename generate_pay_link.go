@@ -221,11 +221,10 @@ type generatePayLinkResponse struct {
 
 func (c *Client) GeneratePayLink(ctx context.Context, request GeneratePayLinkRequest) (url string, err error) {
 	body := toGeneratePayLinkRequest(request)
-	req, err := c.NewRequest(http.MethodPost, "2.0/product/generate_pay_link", body)
+	req, err := c.NewRequest(ctx, http.MethodPost, "2.0/product/generate_pay_link", body)
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	req = req.WithContext(ctx)
 
 	resp, err := c.client.Do(req)
 	if err != nil {

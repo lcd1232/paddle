@@ -49,7 +49,11 @@ func TestOrder(t *testing.T) {
 					},
 				},
 				Order: OrderInfo{
-					Completed:  time.Date(2019, 8, 1, 18, 24, 35, 0, time.UTC),
+					Completed: OrderCompleted{
+						Date:         Time(time.Date(2019, 8, 1, 21, 24, 35, 0, time.UTC)),
+						Timezone:     "UTC",
+						TimezoneType: 3,
+					},
 					CouponCode: nil,
 					Currency:   "GBP",
 					Customer: OrderCustomer{
