@@ -2,7 +2,6 @@ package paddle
 
 import (
 	"context"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"testing"
@@ -28,7 +27,7 @@ func TestOrder(t *testing.T) {
 			checkoutID:   "219233-chre53d41f940e0-58aqh94971",
 			responseCode: http.StatusOK,
 			responseBody: func(t *testing.T) []byte {
-				b, err := ioutil.ReadFile("testdata/order-1.json")
+				b, err := os.ReadFile("testdata/order-1.json")
 				require.NoError(t, err)
 				return b
 			},
