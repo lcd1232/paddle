@@ -72,7 +72,10 @@ type orderRequest struct {
 func (c *Client) Order(ctx context.Context, checkoutID string) (*OrderResponse, error) {
 	req, err := c.NewRequest(ctx, http.MethodGet, "1.0/order", orderRequest{
 		CheckoutID: checkoutID,
-	})
+	},
+		true,
+		false,
+	)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

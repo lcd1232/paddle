@@ -87,7 +87,8 @@ func TestOrder(t *testing.T) {
 					defer cancel()
 				}
 				c, err := NewClient(Settings{
-					URL: url,
+					URL:         url,
+					CheckoutURL: url,
 				})
 				require.NoError(t, err)
 				order, err := c.Order(ctx, tc.checkoutID)
