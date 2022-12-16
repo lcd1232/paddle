@@ -3,7 +3,7 @@ package paddle
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -18,9 +18,9 @@ import (
 func WithTestServer(t *testing.T, responseCode int, responseBody []byte, f func(url string, rCh <-chan *http.Request)) {
 	ch := make(chan *http.Request, 1)
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		b, err := ioutil.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
 		if err == nil {
-			r.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			r.Body = io.NopCloser(bytes.NewBuffer(b))
 		}
 		w.WriteHeader(responseCode)
 		if len(responseBody) > 0 {
