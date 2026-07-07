@@ -84,7 +84,7 @@ func (c *Client) Order(ctx context.Context, checkoutID string) (*OrderResponse, 
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusOK {
 		var data orderResponse

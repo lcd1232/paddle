@@ -45,7 +45,7 @@ func parseDate(s string) (time.Time, error) {
 
 func customDateEncoder(value reflect.Value) string {
 	var t time.Time
-	if value.Kind() == reflect.Ptr {
+	if value.Kind() == reflect.Pointer {
 		if value.IsNil() {
 			return ""
 		}

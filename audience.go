@@ -36,7 +36,7 @@ func (c *Client) Audience(ctx context.Context, email string, marketingConsent bo
 	if err != nil {
 		return 0, errors.WithStack(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusOK {
 		var data audienceResponse

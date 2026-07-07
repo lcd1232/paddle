@@ -230,7 +230,7 @@ func (c *Client) GeneratePayLink(ctx context.Context, request GeneratePayLinkReq
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusOK {
 		var data generatePayLinkResponse
