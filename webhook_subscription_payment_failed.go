@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseSubscriptionPaymentFailedWebhook(form url.Values) (SubscriptionPaymentFailed, error) {
+func (c *WebhookClient) ParseSubscriptionPaymentFailedWebhook(form url.Values) (SubscriptionPaymentFailed, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return SubscriptionPaymentFailed{}, errors.WithStack(err)
@@ -24,9 +24,9 @@ func (c *Client) ParseSubscriptionPaymentFailedWebhook(form url.Values) (Subscri
 		CheckoutID:            spfw.CheckoutID,
 		Currency:              spfw.Currency,
 		Email:                 spfw.Email,
-		EventTime:             time.Time(spfw.EventTime),
+		EventTime:             spfw.EventTime.Time(),
 		MarketingConsent:      bool(spfw.MarketingConsent),
-		NextRetryDate:         time.Time(spfw.NextRetryDate),
+		NextRetryDate:         spfw.NextRetryDate.Time(),
 		Passthrough:           spfw.Passthrough,
 		Quantity:              int(spfw.Quantity),
 		Status:                Status(spfw.Status),

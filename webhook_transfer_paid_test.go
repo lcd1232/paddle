@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -15,10 +16,11 @@ func TestParseTransferPaidWebhook(t *testing.T) {
 		form url.Values
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    TransferPaid
-		wantErr bool
+		name        string
+		args        args
+		want        TransferPaid
+		getVerifier func(t *testing.T) (verifier, func())
+		wantErr     bool
 	}{
 		{
 			name: "valid form data",
@@ -44,16 +46,46 @@ func TestParseTransferPaidWebhook(t *testing.T) {
 				Status:    StatusPaid,
 			},
 		},
+		{
+			name: "verifier error",
+			getVerifier: func(t *testing.T) (verifier, func()) {
+				v := new(verifierMock)
+				v.On("Verify",
+					mock.Anything,
+					mock.Anything,
+					mock.Anything,
+				).Return(errors.New("invalid signature")).Once()
+				return v, func() {
+					v.AssertExpectations(t)
+				}
+			},
+			wantErr: true,
+		},
+		{
+			name: "decode error",
+			args: args{
+				form: url.Values{
+					"event_time": {"asd"},
+				},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c, vm := NewTestClient()
-			vm.On("Verify",
-				mock.Anything,
-				mock.Anything,
-				mock.Anything).Return(
-				nil,
-			).Once()
+			c, vm := NewTestWebhookClient()
+			if tt.getVerifier != nil {
+				vm, f := tt.getVerifier(t)
+				defer f()
+				c.verifier = vm
+			} else {
+				vm.On("Verify",
+					mock.Anything,
+					mock.Anything,
+					mock.Anything).Return(
+					nil,
+				).Once()
+			}
 			got, err := c.ParseTransferPaidWebhook(tt.args.form)
 			if tt.wantErr {
 				require.Error(t, err)

@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *Client) ParseInvoiceSentWebhook(form url.Values) (InvoiceSent, error) {
+func (c *WebhookClient) ParseInvoiceSentWebhook(form url.Values) (InvoiceSent, error) {
 	signature := form.Get(signatureKey)
 	if err := c.verifier.Verify(c.publicKey, signature, form); err != nil {
 		return InvoiceSent{}, errors.WithStack(err)
@@ -25,7 +25,7 @@ func (c *Client) ParseInvoiceSentWebhook(form url.Values) (InvoiceSent, error) {
 		TermDays:                     isw.TermDays,
 		Status:                       Status(isw.Status),
 		PurchaseOrderNumber:          isw.PurchaseOrderNumber,
-		InvoicedAt:                   time.Time(isw.InvoicedAt),
+		InvoicedAt:                   isw.InvoicedAt.Time(),
 		Currency:                     isw.Currency,
 		ProductID:                    isw.ProductID,
 		ProductName:                  isw.ProductName,
@@ -41,16 +41,16 @@ func (c *Client) ParseInvoiceSentWebhook(form url.Values) (InvoiceSent, error) {
 		CustomerZipcode:              isw.CustomerZipcode,
 		Country:                      isw.Country,
 		ContractID:                   isw.ContractID,
-		ContractStartDate:            time.Time(isw.ContractStartDate),
-		ContractEndDate:              time.Time(isw.ContractEndDate),
+		ContractStartDate:            isw.ContractStartDate.Time(),
+		ContractEndDate:              isw.ContractEndDate.Time(),
 		Passthrough:                  isw.Passthrough,
-		DateCreated:                  time.Time(isw.DateCreated),
+		DateCreated:                  isw.DateCreated.Time(),
 		BalanceCurrency:              isw.BalanceCurrency,
 		PaymentTax:                   isw.PaymentTax,
 		PaymentMethod:                PaymentMethod(isw.PaymentMethod),
 		Fee:                          isw.Fee,
 		Earnings:                     isw.Earnings,
-		EventTime:                    time.Time(isw.EventTime),
+		EventTime:                    isw.EventTime.Time(),
 	}
 	return is, nil
 }
